@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1401
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoundationMask", "FoundationMask\FoundationMask.csproj", "{631C9C3F-C9F6-48CA-B3FC-B91D05B5DB9F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{631C9C3F-C9F6-48CA-B3FC-B91D05B5DB9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{631C9C3F-C9F6-48CA-B3FC-B91D05B5DB9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{631C9C3F-C9F6-48CA-B3FC-B91D05B5DB9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{631C9C3F-C9F6-48CA-B3FC-B91D05B5DB9F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CAF875DC-D68C-471A-8151-2DF3B0BB1F4C}
+	EndGlobalSection
+EndGlobal
