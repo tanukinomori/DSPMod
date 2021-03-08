@@ -1,0 +1,9 @@
+{
+    "name": "TankManualInOutAmountMultiply",
+    "version_number": "0.0.1",
+    "website_url": "",
+    "description": "When click on circle in Storage tank UI, Multiply tank input / output amount.",
+    "dependencies": [
+        "xiaoye97-BepInEx-5.4.5"
+    ]
+}
