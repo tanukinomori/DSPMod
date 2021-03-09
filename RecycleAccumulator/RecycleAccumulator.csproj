@@ -54,7 +54,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Patch_Mecha_ public void GenerateEnergy%28double dt%29.cs" />
+    <Compile Include="Patch_Mecha_GenerateEnergy.cs" />
     <Compile Include="RecycleAccumulator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
