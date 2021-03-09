@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoundationMask", "Foundatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TankManualInOutAmountMultiply", "TankManualInOutAmountMultiply\TankManualInOutAmountMultiply.csproj", "{73BE262F-1C63-4619-8B7F-CDE81745AD45}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecycleAccumulator", "RecycleAccumulator\RecycleAccumulator.csproj", "{CB215F23-EACD-4483-B32A-850F3DFFF478}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{73BE262F-1C63-4619-8B7F-CDE81745AD45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73BE262F-1C63-4619-8B7F-CDE81745AD45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73BE262F-1C63-4619-8B7F-CDE81745AD45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB215F23-EACD-4483-B32A-850F3DFFF478}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB215F23-EACD-4483-B32A-850F3DFFF478}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB215F23-EACD-4483-B32A-850F3DFFF478}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB215F23-EACD-4483-B32A-850F3DFFF478}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

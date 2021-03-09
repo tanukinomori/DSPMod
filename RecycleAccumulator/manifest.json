@@ -1,0 +1,9 @@
+{
+    "name": "RecycleAccumulator",
+    "version_number": "0.0.1",
+    "website_url": "",
+    "description": "Put a fully charged accumulator in the fuel chamber and when the gauge runs out, an empty accumulator will be returned.",
+    "dependencies": [
+        "xiaoye97-BepInEx-5.4.5"
+    ]
+}
