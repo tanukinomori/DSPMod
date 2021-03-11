@@ -1,0 +1,9 @@
+{
+    "name": "AutoReplenishItem",
+    "version_number": "0.0.1",
+    "website_url": "",
+    "description": "Automatically replenishes items when the storage is opened.",
+    "dependencies": [
+        "xiaoye97-BepInEx-5.4.5"
+    ]
+}
