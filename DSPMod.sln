@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecycleAccumulator", "Recyc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoReplenishItem", "AutoReplenishItem\AutoReplenishItem.csproj", "{7E8CA51C-32DE-4DAC-8799-C06E61B05D19}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CruiseAssist", "CruiseAssist\CruiseAssist.csproj", "{9CDB5E0F-FB97-46FF-A4FB-A9A400443FD3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{7E8CA51C-32DE-4DAC-8799-C06E61B05D19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E8CA51C-32DE-4DAC-8799-C06E61B05D19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E8CA51C-32DE-4DAC-8799-C06E61B05D19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CDB5E0F-FB97-46FF-A4FB-A9A400443FD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CDB5E0F-FB97-46FF-A4FB-A9A400443FD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CDB5E0F-FB97-46FF-A4FB-A9A400443FD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CDB5E0F-FB97-46FF-A4FB-A9A400443FD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
