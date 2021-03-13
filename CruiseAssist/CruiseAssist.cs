@@ -17,7 +17,7 @@ namespace Tanukinomori
 			LogManager.Logger = base.Logger;
 			//new CruiseAssistConfigManager(base.Config);
 			//ConfigManager.ConfigReload(ConfigManager.Step.AWAKE);
-			var harmony = new Harmony("jp.co.tanukinomori.dsp.cruiseassist.patch");
+			var harmony = new Harmony($"{ModGuid}.patch");
 			//harmony.PatchAll(typeof(Patch_GameMain_Begin));
 			harmony.PatchAll(typeof(Patch_UISailPanel_OnUpdate));
 			harmony.PatchAll(typeof(Patch_PlayerMoveSail_GameTick));
