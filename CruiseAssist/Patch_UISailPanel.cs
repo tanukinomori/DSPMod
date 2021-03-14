@@ -3,16 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 
-// https://en.wikipedia.org/wiki/List_of_CIL_instructions
-
 namespace Tanukinomori
 {
-	[HarmonyPatch(typeof(UISailPanel), "_OnUpdate")]
-	public class Patch_UISailPanel_OnUpdate
+	[HarmonyPatch(typeof(UISailPanel))]
+	public class Patch_UISailPanel
 	{
-		[HarmonyTranspiler]
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-
+		[HarmonyPatch("_OnUpdate"), HarmonyTranspiler]
+		public static IEnumerable<CodeInstruction> OnUpdate_Transpiler(IEnumerable<CodeInstruction> instructions)
+		{
 			CodeMatcher matcher = new CodeMatcher(instructions);
 
 			matcher.
@@ -74,5 +72,33 @@ namespace Tanukinomori
 
 			return matcher.InstructionEnumeration();
 		}
+#if false
+		[HarmonyPatch("_OnCreate"), HarmonyPrefix]
+		public static void OnCreate_Prefix() =>
+			LogManager.Logger.LogInfo("enter UISailPanel._OnCreate");
+
+		[HarmonyPatch("_OnDestroy"), HarmonyPrefix]
+		public static void OnDestroy_Prefix() =>
+			LogManager.Logger.LogInfo("enter UISailPanel._OnDestroy");
+
+		[HarmonyPatch("_OnInit"), HarmonyPrefix]
+		public static void OnInit_Prefix() =>
+			LogManager.Logger.LogInfo("enter UISailPanel._OnInit");
+
+		[HarmonyPatch("_OnFree"), HarmonyPrefix]
+		public static void OnFree_Prefix() =>
+			LogManager.Logger.LogInfo("enter UISailPanel._OnFree");
+
+		[HarmonyPatch("_OnOpen"), HarmonyPrefix]
+		public static void OnOpen_Prefix() =>
+			LogManager.Logger.LogInfo("enter UISailPanel._OnOpen");
+#endif
+		[HarmonyPatch("_OnClose"), HarmonyPrefix]
+		public static void OnClose_Prefix() =>
+			CruiseAssistUI.Show = false;
+
+		[HarmonyPatch("_OnUpdate"), HarmonyPrefix]
+		public static void OnUpdate_Prefix() =>
+			CruiseAssistUI.Show = true;
 	}
 }

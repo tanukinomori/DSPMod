@@ -7,7 +7,7 @@
     <ProjectGuid>{9CDB5E0F-FB97-46FF-A4FB-A9A400443FD3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CruiseAssist</RootNamespace>
+    <RootNamespace>Tanukinomori</RootNamespace>
     <AssemblyName>CruiseAssist</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -52,20 +52,34 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\..\..\Desktop\DysonSphereProgram\DowngradeDll\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Desktop\DysonSphereProgram\DowngradeDll\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Desktop\DysonSphereProgram\DowngradeDll\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Desktop\DysonSphereProgram\DowngradeDll\UnityEngine.UI.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CruiseAssistConfigManager.cs" />
     <Compile Include="CruiseAssist.cs" />
     <Compile Include="ConfigManager.cs" />
+    <Compile Include="CruiseAssistUI.cs" />
     <Compile Include="LogManager.cs" />
-    <Compile Include="Patch_PlayerMoveSail_GameTick.cs" />
-    <Compile Include="Patch_GameMain_Begin.cs" />
-    <Compile Include="Patch_UISailPanel_OnUpdate.cs" />
+    <Compile Include="Patch_PlayerMoveSail.cs" />
+    <Compile Include="Patch_GameMain.cs" />
+    <Compile Include="Patch_UISailPanel.cs" />
+    <Compile Include="Patch_UITechTree.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /y C:\Users\tanu\source\repos\tanukinomori\DSPMod\CruiseAssist\bin\Debug\CruiseAssist.dll C:\Users\tanu\AppData\Roaming\r2modmanPlus-local\DysonSphereProgram\profiles\Default\BepInEx\plugins
+    <PostBuildEvent>copy /y $(TargetPath) C:\Users\tanu\AppData\Roaming\r2modmanPlus-local\DysonSphereProgram\profiles\Default\BepInEx\plugins
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
