@@ -1,21 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 namespace Tanukinomori
 {
 	public class CruiseAssistUI
 	{
 		public static bool Show = false;
-
-		private static Rect rect = new Rect(100f, 100f, 400f, 120f);
+		public static Rect Rect = new Rect(100f, 100f, 480f, 120f);
+		private static float lastCheckWindowLeft = float.MinValue;
+		private static float lastCheckWindowTop = float.MinValue;
+		private static long nextCheckGameTick = long.MaxValue;
 
 		public static void OnGUI()
 		{
-			rect = GUILayout.Window(99030291, rect, WindowFunction, "CruiseAssist".Translate());
+			Rect = GUILayout.Window(99030291, Rect, WindowFunction, "CruiseAssist".Translate());
+			if (lastCheckWindowLeft != float.MinValue)
+			{
+				if (Rect.x != lastCheckWindowLeft || Rect.y != lastCheckWindowTop)
+				{
+					nextCheckGameTick = GameMain.gameTick + 300;
+				}
+			}
+			lastCheckWindowLeft = Rect.x;
+			lastCheckWindowTop = Rect.y;
+			if (nextCheckGameTick <= GameMain.gameTick)
+			{
+				ConfigManager.CheckConfig(ConfigManager.Step.STATE);
+				nextCheckGameTick = long.MaxValue;
+			}
 		}
 
 		private static void WindowFunction(int windowId)
@@ -29,16 +40,16 @@ namespace Tanukinomori
 			GUILayout.BeginHorizontal();
 			{
 				GUILayout.Label("Target System: ".Translate());
-				if (CruiseAssist.targetStar != null)
+				if (CruiseAssist.TargetStar != null)
 				{
-					if (CruiseAssist.state == CruiseAssist.State.TO_STAR)
+					if (CruiseAssist.State == CruiseAssistState.TO_STAR_CURSOR)
 					{
 						GUI.color = Color.cyan;
 					}
-					GUILayout.Label(CruiseAssist.targetStar.name);
+					GUILayout.Label(CruiseAssist.TargetStar.name);
 					GUI.color = Color.white;
 				}
-				//GUILayout.FlexibleSpace();
+				GUILayout.FlexibleSpace();
 				//GUILayout.Button("S");
 			}
 			GUILayout.EndHorizontal();
@@ -46,22 +57,22 @@ namespace Tanukinomori
 			GUILayout.BeginHorizontal();
 			{
 				GUILayout.Label("Target Planet: ".Translate());
-				if (CruiseAssist.targetPlanet != null)
+				if (CruiseAssist.TargetPlanet != null)
 				{
-					if (CruiseAssist.state == CruiseAssist.State.TO_PLANET)
+					if (CruiseAssist.State == CruiseAssistState.TO_PLANET_CURSOR)
 					{
 						GUI.color = Color.cyan;
 					}
-					GUILayout.Label(CruiseAssist.targetPlanet.name);
+					GUILayout.Label(CruiseAssist.TargetPlanet.name);
 					GUI.color = Color.white;
 				}
-				//GUILayout.FlexibleSpace();
+				GUILayout.FlexibleSpace();
 				//GUILayout.Button("S");
 			}
 			GUILayout.EndHorizontal();
 
 			GUILayout.BeginHorizontal();
-			if (CruiseAssist.state == CruiseAssist.State.INACTIVE)
+			if (CruiseAssist.State == CruiseAssistState.INACTIVE)
 			{
 				GUILayout.Label("Cruise Assist Inactivated.".Translate());
 			}

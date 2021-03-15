@@ -9,16 +9,16 @@ namespace Tanukinomori
 		[HarmonyPatch("GameTick"), HarmonyPrefix]
 		public static void GameTick_Prefix(PlayerMove_Sail __instance)
 		{
-			CruiseAssist.state = CruiseAssist.State.INACTIVE;
+			CruiseAssist.State = CruiseAssistState.INACTIVE;
 			var player = __instance.player;
 			if (!player.sailing)
 			{
 				return;
 			}
-			if (CruiseAssist.targetPlanet != null)
+			if (CruiseAssist.TargetPlanet != null)
 			{
-				CruiseAssist.state = CruiseAssist.State.TO_PLANET;
-				var playerToPlanet = CruiseAssist.targetPlanet.uPosition - player.uPosition;
+				CruiseAssist.State = CruiseAssistState.TO_PLANET_CURSOR;
+				var playerToPlanet = CruiseAssist.TargetPlanet.uPosition - player.uPosition;
 #if false
 				var a = VectorLF3.AngleRAD(player.uVelocity, playerToPlanet);
 				var d = playerToPlanet.magnitude - (double)CruiseAssist.targetPlanet.realRadius;
@@ -35,10 +35,10 @@ namespace Tanukinomori
 				var magnitude = player.controller.actionSail.visual_uvel.magnitude;
 				player.uVelocity = Vector3.Slerp(player.uVelocity, playerToPlanet.normalized * magnitude, t);
 			}
-			else if (player.warping && CruiseAssist.targetStar != null)
+			else if (player.warping && CruiseAssist.TargetStar != null)
 			{
-				CruiseAssist.state = CruiseAssist.State.TO_STAR;
-				var playerToStar = CruiseAssist.targetStar.uPosition - player.uPosition;
+				CruiseAssist.State = CruiseAssistState.TO_STAR_CURSOR;
+				var playerToStar = CruiseAssist.TargetStar.uPosition - player.uPosition;
 #if false
 				var a = VectorLF3.AngleRAD(player.uVelocity, playerToStar);
 				var d = playerToStar.magnitude;

@@ -69,6 +69,7 @@
     <Compile Include="CruiseAssistConfigManager.cs" />
     <Compile Include="CruiseAssist.cs" />
     <Compile Include="ConfigManager.cs" />
+    <Compile Include="CruiseAssistState.cs" />
     <Compile Include="CruiseAssistUI.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="Patch_PlayerMoveSail.cs" />

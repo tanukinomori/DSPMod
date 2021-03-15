@@ -8,20 +8,18 @@ namespace Tanukinomori
 	{
 		public const string ModGuid = "tanu.CruiseAssist";
 		public const string ModName = "CruiseAssist";
-		public const string ModVersion = "0.0.4";
+		public const string ModVersion = "0.0.5";
 
-		public enum State { TO_STAR, TO_PLANET, INACTIVE };
-
-		public static StarData targetStar = null;
-		public static PlanetData targetPlanet = null;
-		public static State state = State.INACTIVE;
+		public static StarData TargetStar = null;
+		public static PlanetData TargetPlanet = null;
+		public static CruiseAssistState State = CruiseAssistState.INACTIVE;
 		public static bool TechTreeShow = false;
 
 		public void Awake()
 		{
 			LogManager.Logger = base.Logger;
 			new CruiseAssistConfigManager(base.Config);
-			ConfigManager.ConfigReload(ConfigManager.Step.AWAKE);
+			ConfigManager.CheckConfig(ConfigManager.Step.AWAKE);
 			var harmony = new Harmony($"{ModGuid}.Patch");
 			harmony.PatchAll(typeof(Patch_GameMain));
 			harmony.PatchAll(typeof(Patch_UISailPanel));

@@ -22,8 +22,8 @@ namespace Tanukinomori
 			matcher.
 				InsertAndAdvance(Transpilers.EmitDelegate<Action>(
 					() => {
-						CruiseAssist.targetPlanet = null;
-						CruiseAssist.targetStar = null;
+						CruiseAssist.TargetPlanet = null;
+						CruiseAssist.TargetStar = null;
 					}));
 
 			matcher.
@@ -45,7 +45,7 @@ namespace Tanukinomori
 				InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, 17)).
 				InsertAndAdvance(Transpilers.EmitDelegate<Action<PlanetData[], int>>(
 					(planets, planetIndex) => {
-						CruiseAssist.targetPlanet = planets[planetIndex];
+						CruiseAssist.TargetPlanet = planets[planetIndex];
 					}));
 
 			matcher.
@@ -67,7 +67,7 @@ namespace Tanukinomori
 				InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, 22)).
 				InsertAndAdvance(Transpilers.EmitDelegate<Action<StarData[], int>>(
 					(stars, starIndex) => {
-						CruiseAssist.targetStar = stars[starIndex];
+						CruiseAssist.TargetStar = stars[starIndex];
 					}));
 
 			return matcher.InstructionEnumeration();
@@ -94,11 +94,16 @@ namespace Tanukinomori
 			LogManager.Logger.LogInfo("enter UISailPanel._OnOpen");
 #endif
 		[HarmonyPatch("_OnClose"), HarmonyPrefix]
-		public static void OnClose_Prefix() =>
+		public static void OnClose_Prefix()
+		{
 			CruiseAssistUI.Show = false;
+			ConfigManager.CheckConfig(ConfigManager.Step.STATE);
+		}
 
 		[HarmonyPatch("_OnUpdate"), HarmonyPrefix]
-		public static void OnUpdate_Prefix() =>
+		public static void OnUpdate_Prefix()
+		{
 			CruiseAssistUI.Show = true;
+		}
 	}
 }

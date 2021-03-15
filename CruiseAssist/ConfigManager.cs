@@ -7,7 +7,7 @@ namespace Tanukinomori
 {
 	public abstract class ConfigManager
 	{
-		public enum Step { AWAKE, GAME_MAIN_BEGIN }
+		public enum Step { AWAKE, GAME_MAIN_BEGIN, STATE }
 
 		private static ConfigManager _instance;
 
@@ -19,10 +19,10 @@ namespace Tanukinomori
 			Config.SaveOnConfigSet = false;
 		}
 
-		public static void ConfigReload(Step step) =>
-			_instance.ConfigReloadImplements(step);
+		public static void CheckConfig(Step step) =>
+			_instance.CheckConfigImplements(step);
 
-		protected abstract void ConfigReloadImplements(Step step);
+		protected abstract void CheckConfigImplements(Step step);
 
 		public static ConfigEntry<T> Bind<T>(ConfigDefinition configDefinition, T defaultValue, ConfigDescription configDescription = null) =>
 			Config.Bind<T>(configDefinition, defaultValue, configDescription);

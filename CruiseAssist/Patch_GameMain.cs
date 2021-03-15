@@ -7,11 +7,14 @@ namespace Tanukinomori
 	{
 		[HarmonyPatch("Begin"), HarmonyPrefix]
 		public static void Begin_Prefix() {
-			ConfigManager.ConfigReload(ConfigManager.Step.GAME_MAIN_BEGIN);
+			ConfigManager.CheckConfig(ConfigManager.Step.GAME_MAIN_BEGIN);
 		}
 
 		[HarmonyPatch("Pause"), HarmonyPrefix]
-		public static void Pause_Prefix() =>
+		public static void Pause_Prefix()
+		{
 			CruiseAssistUI.Show = false;
+			ConfigManager.CheckConfig(ConfigManager.Step.STATE);
+		}
 	}
 }
