@@ -8,7 +8,7 @@ namespace Tanukinomori
 	{
 		public const string ModGuid = "tanu.CruiseAssist";
 		public const string ModName = "CruiseAssist";
-		public const string ModVersion = "0.0.5";
+		public const string ModVersion = "0.0.6";
 
 		public static StarData TargetStar = null;
 		public static PlanetData TargetPlanet = null;
