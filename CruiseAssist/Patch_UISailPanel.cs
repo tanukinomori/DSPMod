@@ -22,8 +22,8 @@ namespace Tanukinomori
 			matcher.
 				InsertAndAdvance(Transpilers.EmitDelegate<Action>(
 					() => {
-						CruiseAssist.TargetPlanet = null;
-						CruiseAssist.TargetStar = null;
+						CruiseAssist.ReticuleTargetPlanet = null;
+						CruiseAssist.ReticuleTargetStar = null;
 					}));
 
 			matcher.
@@ -45,7 +45,7 @@ namespace Tanukinomori
 				InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, 17)).
 				InsertAndAdvance(Transpilers.EmitDelegate<Action<PlanetData[], int>>(
 					(planets, planetIndex) => {
-						CruiseAssist.TargetPlanet = planets[planetIndex];
+						CruiseAssist.ReticuleTargetPlanet = planets[planetIndex];
 					}));
 
 			matcher.
@@ -67,7 +67,7 @@ namespace Tanukinomori
 				InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, 22)).
 				InsertAndAdvance(Transpilers.EmitDelegate<Action<StarData[], int>>(
 					(stars, starIndex) => {
-						CruiseAssist.TargetStar = stars[starIndex];
+						CruiseAssist.ReticuleTargetStar = stars[starIndex];
 					}));
 
 			return matcher.InstructionEnumeration();

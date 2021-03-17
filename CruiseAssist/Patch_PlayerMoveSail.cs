@@ -15,19 +15,19 @@ namespace Tanukinomori
 			{
 				return;
 			}
-			if (CruiseAssist.TargetPlanet != null)
+			if (CruiseAssist.ReticuleTargetPlanet != null)
 			{
-				CruiseAssist.State = CruiseAssistState.TO_PLANET_CURSOR;
-				var playerToPlanet = CruiseAssist.TargetPlanet.uPosition - player.uPosition;
+				CruiseAssist.State = CruiseAssistState.TO_PLANET_RETICULE;
+				var playerToPlanet = CruiseAssist.ReticuleTargetPlanet.uPosition - player.uPosition;
 				var angle = Vector3.Angle(playerToPlanet, player.uVelocity);
 				var t = 1.6f / Mathf.Max(10f, angle);
 				var magnitude = player.controller.actionSail.visual_uvel.magnitude;
 				player.uVelocity = Vector3.Slerp(player.uVelocity, playerToPlanet.normalized * magnitude, t);
 			}
-			else if (player.warping && CruiseAssist.TargetStar != null)
+			else if (player.warping && CruiseAssist.ReticuleTargetStar != null)
 			{
-				CruiseAssist.State = CruiseAssistState.TO_STAR_CURSOR;
-				var playerToStar = CruiseAssist.TargetStar.uPosition - player.uPosition;
+				CruiseAssist.State = CruiseAssistState.TO_STAR_RETICULE;
+				var playerToStar = CruiseAssist.ReticuleTargetStar.uPosition - player.uPosition;
 				var angle = Vector3.Angle(playerToStar, player.uVelocity);
 				var t = 1.6f / Mathf.Max(10f, angle);
 				var magnitude = player.controller.actionSail.visual_uvel.magnitude;

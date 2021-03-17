@@ -56,7 +56,7 @@ namespace Tanukinomori
 				GetOrphanedEntries().Clear();
 			}
 			Config.Save();
-			LogManager.Logger.LogInfo("save config.");
+			LogManager.LogInfo("save config.");
 		}
 	}
 }

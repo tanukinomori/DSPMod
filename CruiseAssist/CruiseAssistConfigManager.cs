@@ -43,7 +43,7 @@ namespace Tanukinomori
 			}
 			if (step == Step.AWAKE)
 			{
-				LogManager.Logger.LogInfo("config reloaded.");
+				LogManager.LogInfo("config reloaded.");
 			}
 		}
 	}
