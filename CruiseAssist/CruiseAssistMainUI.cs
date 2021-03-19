@@ -4,8 +4,18 @@ namespace Tanukinomori
 {
 	public class CruiseAssistMainUI
 	{
+		public static int FontSize16 = 16;
+		public static int FontSize20 = 20;
+		public static float WindowWidth = 560f;
+		public static float WindowHeight = 120f;
+#if false
+		public static int FontSize16 = 14;
+		public static int FontSize20 = 15;
+		public static float WindowWidth = 420f;
+		public static float WindowHeight = 90f;
+#endif
 		public static bool Show = false;
-		public static Rect Rect = new Rect(0f, 0f, 540f, 120f);
+		public static Rect Rect = new Rect(0f, 0f, WindowWidth, WindowHeight);
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
@@ -13,6 +23,8 @@ namespace Tanukinomori
 
 		public static void OnGUI()
 		{
+			GUI.skin.window.fontSize = 11;
+
 			Rect = GUILayout.Window(99030291, Rect, WindowFunction, "CruiseAssist");
 
 			if (Rect.x < 0)
@@ -61,7 +73,7 @@ namespace Tanukinomori
 			{
 				GUI.color = Color.white;
 				GUI.skin.label.alignment = TextAnchor.UpperLeft;
-				GUI.skin.label.fontSize = 16;
+				GUI.skin.label.fontSize = FontSize16;
 
 				if (CruiseAssist.State == CruiseAssistState.TO_STAR)
 				{
@@ -82,7 +94,7 @@ namespace Tanukinomori
 			GUILayout.BeginVertical();
 			{
 				GUI.skin.label.alignment = TextAnchor.MiddleLeft;
-				GUI.skin.label.fontSize = 20;
+				GUI.skin.label.fontSize = FontSize20;
 
 				if (CruiseAssist.TargetStar != null)
 				{
@@ -131,7 +143,7 @@ namespace Tanukinomori
 				}
 
 				GUI.skin.label.alignment = TextAnchor.MiddleRight;
-				GUI.skin.label.fontSize = 16;
+				GUI.skin.label.fontSize = FontSize16;
 				if (CruiseAssist.TargetStar != null)
 				{
 					if (CruiseAssist.State == CruiseAssistState.TO_STAR)
@@ -168,7 +180,7 @@ namespace Tanukinomori
 			GUILayout.BeginHorizontal();
 			{
 				GUI.skin.label.alignment = TextAnchor.MiddleLeft;
-				GUI.skin.label.fontSize = 20;
+				GUI.skin.label.fontSize = FontSize20;
 
 				if (CruiseAssist.State == CruiseAssistState.INACTIVE)
 				{

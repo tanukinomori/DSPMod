@@ -8,8 +8,14 @@ namespace Tanukinomori
 {
 	public class CruiseAssistStarListUI
 	{
+		public static float WindowWidth = 560f;
+		public static float WindowHeight = 600f;
+#if false
+		public static float WindowWidth = 420f;
+		public static float WindowHeight = 450f;
+#endif
 		public static bool Show = false;
-		public static Rect Rect = new Rect(0f, 0f, 540f, 600f);
+		public static Rect Rect = new Rect(0f, 0f, WindowWidth, WindowHeight);
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
@@ -19,6 +25,8 @@ namespace Tanukinomori
 
 		public static void OnGUI()
 		{
+			GUI.skin.window.fontSize = 11;
+
 			Rect = GUILayout.Window(99030292, Rect, WindowFunction, "CruiseAssist - StarList");
 
 			if (Rect.x < 0)
@@ -59,7 +67,7 @@ namespace Tanukinomori
 
 		public static void WindowFunction(int windowId)
 		{
-			GUI.skin.label.fontSize = 16;
+			GUI.skin.label.fontSize = CruiseAssistMainUI.FontSize16;
 
 			GUILayout.BeginVertical();
 
@@ -72,15 +80,15 @@ namespace Tanukinomori
 				if (GameMain.localStar != null && star.id == GameMain.localStar.id)
 				{
 					GameMain.localStar.planets.
-						Select(planet => new Tuple<object, double>(planet, (planet.uPosition - GameMain.mainPlayer.uPosition).magnitude)).
-						AddItem(new Tuple<object, double>(star, (star.uPosition - GameMain.mainPlayer.uPosition).magnitude)).
+						Select(planet => new Tuple<PlanetData, double>(planet, (planet.uPosition - GameMain.mainPlayer.uPosition).magnitude)).
+						AddItem(new Tuple<PlanetData, double>(null, (star.uPosition - GameMain.mainPlayer.uPosition).magnitude)).
 						OrderBy(tuple2 => tuple2.v2).
 						Do(tuple2 =>
 						{
-							var planet = tuple2.v1 as PlanetData;
+							var planet = tuple2.v1;
 							GUILayout.BeginHorizontal();
 							GUI.color = Color.white;
-							if (tuple2.v1 is StarData)
+							if (planet == null)
 							{
 								if (CruiseAssist.SelectTargetPlanet == null && CruiseAssist.SelectTargetStar != null && star.id == CruiseAssist.SelectTargetStar.id)
 								{
@@ -95,23 +103,13 @@ namespace Tanukinomori
 									GUI.color = Color.cyan;
 								}
 								GUILayout.Label(starName + " - " + CruiseAssist.GetPlanetName(planet));
-
 							}
 							GUILayout.FlexibleSpace();
 							GUILayout.Label(CruiseAssistMainUI.RangeToString(tuple2.v2));
 							GUI.color = Color.white;
 							if (GUILayout.Button("SET"))
 							{
-								if (tuple2.v1 is StarData)
-								{
-									CruiseAssist.SelectTargetStar = star;
-									CruiseAssist.SelectTargetPlanet = null;
-								}
-								else
-								{
-									CruiseAssist.SelectTargetStar = star;
-									CruiseAssist.SelectTargetPlanet = planet;
-								}
+								SelectStar(star, planet);
 							}
 							GUILayout.EndHorizontal();
 						});
@@ -130,8 +128,7 @@ namespace Tanukinomori
 					GUI.color = Color.white;
 					if (GUILayout.Button("SET"))
 					{
-						CruiseAssist.SelectTargetStar = star;
-						CruiseAssist.SelectTargetPlanet = null;
+						SelectStar(star, null);
 					}
 					GUI.color = Color.white;
 					GUILayout.EndHorizontal();
@@ -146,8 +143,7 @@ namespace Tanukinomori
 
 			if (GUILayout.Button("Cancel", GUILayout.ExpandWidth(false)))
 			{
-				CruiseAssist.SelectTargetStar = null;
-				CruiseAssist.SelectTargetPlanet = null;
+				SelectStar(null, null);
 			}
 
 			if (GUILayout.Button("Close", GUILayout.ExpandWidth(false)))
@@ -160,6 +156,27 @@ namespace Tanukinomori
 			GUILayout.EndVertical();
 
 			GUI.DragWindow();
+		}
+
+		public static void SelectStar(StarData star, PlanetData planet)
+		{
+			CruiseAssist.SelectTargetStar = star;
+			CruiseAssist.SelectTargetPlanet = planet;
+
+			if (planet != null)
+			{
+				GameMain.mainPlayer.navigation.indicatorAstroId = planet.id;
+			}
+			else if (star != null)
+			{
+				GameMain.mainPlayer.navigation.indicatorAstroId = star.id * 100;
+			}
+			else
+			{
+				GameMain.mainPlayer.navigation.indicatorAstroId = 0;
+			}
+
+			CruiseAssist.SelectTargetAstroId = GameMain.mainPlayer.navigation.indicatorAstroId;
 		}
 	}
 }
