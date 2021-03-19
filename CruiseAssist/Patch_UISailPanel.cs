@@ -21,7 +21,8 @@ namespace Tanukinomori
 
 			matcher.
 				InsertAndAdvance(Transpilers.EmitDelegate<Action>(
-					() => {
+					() =>
+					{
 						CruiseAssist.ReticuleTargetPlanet = null;
 						CruiseAssist.ReticuleTargetStar = null;
 					}));
@@ -44,7 +45,8 @@ namespace Tanukinomori
 				InsertAndAdvance(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(StarData), nameof(StarData.planets)))).
 				InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, 17)).
 				InsertAndAdvance(Transpilers.EmitDelegate<Action<PlanetData[], int>>(
-					(planets, planetIndex) => {
+					(planets, planetIndex) =>
+					{
 						CruiseAssist.ReticuleTargetPlanet = planets[planetIndex];
 					}));
 
@@ -66,7 +68,8 @@ namespace Tanukinomori
 				InsertAndAdvance(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(GalaxyData), nameof(GalaxyData.stars)))).
 				InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, 22)).
 				InsertAndAdvance(Transpilers.EmitDelegate<Action<StarData[], int>>(
-					(stars, starIndex) => {
+					(stars, starIndex) =>
+					{
 						CruiseAssist.ReticuleTargetStar = stars[starIndex];
 					}));
 
@@ -96,14 +99,14 @@ namespace Tanukinomori
 		[HarmonyPatch("_OnClose"), HarmonyPrefix]
 		public static void OnClose_Prefix()
 		{
-			CruiseAssistUI.Show = false;
+			CruiseAssistMainUI.Show = false;
 			ConfigManager.CheckConfig(ConfigManager.Step.STATE);
 		}
 
 		[HarmonyPatch("_OnUpdate"), HarmonyPrefix]
 		public static void OnUpdate_Prefix()
 		{
-			CruiseAssistUI.Show = true;
+			CruiseAssistMainUI.Show = true;
 		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using System;
 
 namespace Tanukinomori
 {
@@ -8,14 +9,19 @@ namespace Tanukinomori
 	{
 		public const string ModGuid = "tanu.CruiseAssist";
 		public const string ModName = "CruiseAssist";
-		public const string ModVersion = "0.0.7";
+		public const string ModVersion = "0.0.8";
 
 		public static StarData ReticuleTargetStar = null;
 		public static PlanetData ReticuleTargetPlanet = null;
 		public static StarData SelectTargetStar = null;
 		public static PlanetData SelectTargetPlanet = null;
+		public static StarData TargetStar = null;
+		public static PlanetData TargetPlanet = null;
 		public static CruiseAssistState State = CruiseAssistState.INACTIVE;
 		public static bool TechTreeShow = false;
+
+		public static Func<StarData, string> GetStarName = star => star.name;
+		public static Func<PlanetData, string> GetPlanetName = planet => planet.name;
 
 		public void Awake()
 		{
@@ -31,9 +37,13 @@ namespace Tanukinomori
 
 		public void OnGUI()
 		{
-			if (CruiseAssistUI.Show && !TechTreeShow)
+			if (CruiseAssistMainUI.Show && !TechTreeShow)
 			{
-				CruiseAssistUI.OnGUI();
+				CruiseAssistMainUI.OnGUI();
+				if (CruiseAssistStarListUI.Show)
+				{
+					CruiseAssistStarListUI.OnGUI();
+				}
 			}
 		}
 	}

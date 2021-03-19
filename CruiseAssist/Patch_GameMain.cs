@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using System.Collections.Generic;
 
 namespace Tanukinomori
 {
@@ -7,14 +6,15 @@ namespace Tanukinomori
 	public class Patch_GameMain
 	{
 		[HarmonyPatch("Begin"), HarmonyPrefix]
-		public static void Begin_Prefix() {
+		public static void Begin_Prefix()
+		{
 			ConfigManager.CheckConfig(ConfigManager.Step.GAME_MAIN_BEGIN);
 		}
 
 		[HarmonyPatch("Pause"), HarmonyPrefix]
 		public static void Pause_Prefix()
 		{
-			CruiseAssistUI.Show = false;
+			CruiseAssistMainUI.Show = false;
 			ConfigManager.CheckConfig(ConfigManager.Step.STATE);
 		}
 	}

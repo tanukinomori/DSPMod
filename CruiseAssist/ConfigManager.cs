@@ -1,4 +1,5 @@
 ﻿using BepInEx.Configuration;
+using HarmonyLib;
 using System.Collections.Generic;
 
 // https://github.com/BepInEx/BepInEx/blob/master/BepInEx.Core/Configuration/ConfigFile.cs
@@ -13,7 +14,8 @@ namespace Tanukinomori
 
 		public static ConfigFile Config { private set; get; }
 
-		protected ConfigManager(ConfigFile config) {
+		protected ConfigManager(ConfigFile config)
+		{
 			_instance = this;
 			Config = config;
 			Config.SaveOnConfigSet = false;
@@ -49,10 +51,12 @@ namespace Tanukinomori
 			Config.Remove(key);
 
 		public static Dictionary<ConfigDefinition, string> GetOrphanedEntries() =>
-			(Dictionary<ConfigDefinition, string>)typeof(ConfigFile).GetProperty("OrphanedEntries", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(Config, null);
+			(Dictionary<ConfigDefinition, string>)AccessTools.Property(typeof(ConfigFile), "OrphanedEntries").GetValue(Config, null);
 
-		public static void Save(bool clearOrphanedEntries = true) {
-			if (clearOrphanedEntries) {
+		public static void Save(bool clearOrphanedEntries = true)
+		{
+			if (clearOrphanedEntries)
+			{
 				GetOrphanedEntries().Clear();
 			}
 			Config.Save();

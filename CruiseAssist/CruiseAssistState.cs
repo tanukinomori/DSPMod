@@ -2,10 +2,8 @@
 {
 	public enum CruiseAssistState
 	{
-		TO_STAR_RETICULE,
-		TO_PLANET_RETICULE,
-		TO_STAR_SELECT,
-		TO_PLANET_SELECT,
+		TO_STAR,
+		TO_PLANET,
 		INACTIVE
 	};
 }

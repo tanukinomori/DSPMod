@@ -1,13 +1,11 @@
-﻿using HarmonyLib;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Tanukinomori
 {
-	public class CruiseAssistUI
+	public class CruiseAssistMainUI
 	{
 		public static bool Show = false;
-		public static Rect Rect = new Rect(100f, 100f, 540f, 120f);
+		public static Rect Rect = new Rect(0f, 0f, 540f, 120f);
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
@@ -53,7 +51,7 @@ namespace Tanukinomori
 			}
 		}
 
-		private static void WindowFunction(int windowId)
+		public static void WindowFunction(int windowId)
 		{
 			GUILayout.BeginVertical();
 
@@ -65,14 +63,14 @@ namespace Tanukinomori
 				GUI.skin.label.alignment = TextAnchor.UpperLeft;
 				GUI.skin.label.fontSize = 16;
 
-				if (CruiseAssist.State == CruiseAssistState.TO_STAR_RETICULE)
+				if (CruiseAssist.State == CruiseAssistState.TO_STAR)
 				{
 					GUI.color = Color.cyan;
 				}
 				GUILayout.Label("Target\n System:", GUILayout.ExpandHeight(true));
 				GUI.color = Color.white;
 
-				if (CruiseAssist.State == CruiseAssistState.TO_PLANET_RETICULE)
+				if (CruiseAssist.State == CruiseAssistState.TO_PLANET)
 				{
 					GUI.color = Color.cyan;
 				}
@@ -86,15 +84,13 @@ namespace Tanukinomori
 				GUI.skin.label.alignment = TextAnchor.MiddleLeft;
 				GUI.skin.label.fontSize = 20;
 
-				GUI.backgroundColor = Color.red;
-
-				if (CruiseAssist.ReticuleTargetStar != null)
+				if (CruiseAssist.TargetStar != null)
 				{
-					if (CruiseAssist.State == CruiseAssistState.TO_STAR_RETICULE)
+					if (CruiseAssist.State == CruiseAssistState.TO_STAR)
 					{
 						GUI.color = Color.cyan;
 					}
-					GUILayout.Label(CruiseAssist.ReticuleTargetStar.name, GUILayout.ExpandHeight(true));
+					GUILayout.Label(CruiseAssist.GetStarName(CruiseAssist.TargetStar), GUILayout.ExpandHeight(true));
 					GUI.color = Color.white;
 				}
 				else
@@ -102,13 +98,13 @@ namespace Tanukinomori
 					GUILayout.Label(" ", GUILayout.ExpandHeight(true));
 				}
 
-				if (CruiseAssist.ReticuleTargetPlanet != null)
+				if (CruiseAssist.TargetPlanet != null)
 				{
-					if (CruiseAssist.State == CruiseAssistState.TO_PLANET_RETICULE)
+					if (CruiseAssist.State == CruiseAssistState.TO_PLANET)
 					{
 						GUI.color = Color.cyan;
 					}
-					GUILayout.Label(CruiseAssist.ReticuleTargetPlanet.name, GUILayout.ExpandHeight(true));
+					GUILayout.Label(CruiseAssist.GetPlanetName(CruiseAssist.TargetPlanet), GUILayout.ExpandHeight(true));
 					GUI.color = Color.white;
 				}
 				else
@@ -136,13 +132,13 @@ namespace Tanukinomori
 
 				GUI.skin.label.alignment = TextAnchor.MiddleRight;
 				GUI.skin.label.fontSize = 16;
-				if (CruiseAssist.ReticuleTargetStar != null)
+				if (CruiseAssist.TargetStar != null)
 				{
-					if (CruiseAssist.State == CruiseAssistState.TO_STAR_RETICULE)
+					if (CruiseAssist.State == CruiseAssistState.TO_STAR)
 					{
 						GUI.color = Color.cyan;
 					}
-					var range = (CruiseAssist.ReticuleTargetStar.uPosition - GameMain.mainPlayer.uPosition).magnitude - (double)(CruiseAssist.ReticuleTargetStar.viewRadius - 120f);
+					var range = (CruiseAssist.TargetStar.uPosition - GameMain.mainPlayer.uPosition).magnitude - (double)(CruiseAssist.TargetStar.viewRadius - 120f);
 					GUILayout.Label(RangeToString(range) + "\n" + TimeToString(range / velocity), GUILayout.ExpandHeight(true));
 					GUI.color = Color.white;
 				}
@@ -150,13 +146,13 @@ namespace Tanukinomori
 				{
 					GUILayout.Label(" \n ", GUILayout.ExpandHeight(true));
 				}
-				if (CruiseAssist.ReticuleTargetPlanet != null)
+				if (CruiseAssist.TargetPlanet != null)
 				{
-					if (CruiseAssist.State == CruiseAssistState.TO_PLANET_RETICULE)
+					if (CruiseAssist.State == CruiseAssistState.TO_PLANET)
 					{
 						GUI.color = Color.cyan;
 					}
-					var range = (CruiseAssist.ReticuleTargetPlanet.uPosition - GameMain.mainPlayer.uPosition).magnitude - (double)CruiseAssist.ReticuleTargetPlanet.realRadius;
+					var range = (CruiseAssist.TargetPlanet.uPosition - GameMain.mainPlayer.uPosition).magnitude - (double)CruiseAssist.TargetPlanet.realRadius;
 					GUILayout.Label(RangeToString(range) + "\n" + TimeToString(range / velocity), GUILayout.ExpandHeight(true));
 					GUI.color = Color.white;
 				}
@@ -185,6 +181,13 @@ namespace Tanukinomori
 					GUILayout.Label("Cruise Assist Activated.");
 					GUI.color = Color.white;
 				}
+
+				GUILayout.FlexibleSpace();
+
+				if (GUILayout.Button("StarList"))
+				{
+					CruiseAssistStarListUI.Show = true;
+				}
 			}
 			GUILayout.EndHorizontal();
 
@@ -193,7 +196,7 @@ namespace Tanukinomori
 			GUI.DragWindow();
 		}
 
-		private static string RangeToString(double range)
+		public static string RangeToString(double range)
 		{
 			if (range < 10000.0)
 			{
@@ -210,7 +213,7 @@ namespace Tanukinomori
 			}
 		}
 
-		private static string TimeToString(double time)
+		public static string TimeToString(double time)
 		{
 			return time.ToString("0.0") + "s ";
 		}

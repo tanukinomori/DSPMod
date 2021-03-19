@@ -15,24 +15,84 @@ namespace Tanukinomori
 			{
 				return;
 			}
-			if (CruiseAssist.ReticuleTargetPlanet != null)
+
+			CruiseAssist.TargetStar = null;
+			CruiseAssist.TargetPlanet = null;
+
+			if (CruiseAssist.SelectTargetStar != null)
 			{
-				CruiseAssist.State = CruiseAssistState.TO_PLANET_RETICULE;
-				var playerToPlanet = CruiseAssist.ReticuleTargetPlanet.uPosition - player.uPosition;
-				var angle = Vector3.Angle(playerToPlanet, player.uVelocity);
-				var t = 1.6f / Mathf.Max(10f, angle);
-				var magnitude = player.controller.actionSail.visual_uvel.magnitude;
-				player.uVelocity = Vector3.Slerp(player.uVelocity, playerToPlanet.normalized * magnitude, t);
+				// 星系を選択
+
+				if (GameMain.localStar != null && CruiseAssist.SelectTargetStar.id == GameMain.localStar.id)
+				{
+					// 選択した星系の中に居るとき
+
+					if (CruiseAssist.SelectTargetPlanet != null)
+					{
+						// 惑星を選択したとき
+
+						if (GameMain.localPlanet != null && CruiseAssist.SelectTargetPlanet.id == GameMain.localPlanet.id)
+						{
+							// 選択した惑星に居るとき、選択を解除する
+							CruiseAssist.SelectTargetStar = null;
+							CruiseAssist.SelectTargetPlanet = null;
+							return;
+						}
+
+						// 対象とする
+						CruiseAssist.TargetPlanet = CruiseAssist.SelectTargetPlanet;
+					}
+					else if (CruiseAssist.ReticuleTargetPlanet != null)
+					{
+						// レティクルが惑星を向いているとき、対象とする
+						CruiseAssist.TargetPlanet = CruiseAssist.ReticuleTargetPlanet;
+					}
+				}
+				else
+				{
+					// 選択した星系の外に居るとき
+
+					// 選択した星系を対象とする
+					CruiseAssist.TargetStar = CruiseAssist.SelectTargetStar;
+				}
 			}
-			else if (player.warping && CruiseAssist.ReticuleTargetStar != null)
+			else
 			{
-				CruiseAssist.State = CruiseAssistState.TO_STAR_RETICULE;
-				var playerToStar = CruiseAssist.ReticuleTargetStar.uPosition - player.uPosition;
-				var angle = Vector3.Angle(playerToStar, player.uVelocity);
-				var t = 1.6f / Mathf.Max(10f, angle);
-				var magnitude = player.controller.actionSail.visual_uvel.magnitude;
-				player.uVelocity = Vector3.Slerp(player.uVelocity, playerToStar.normalized * magnitude, t);
+				// 星系も惑星も未選択
+
+				if (CruiseAssist.ReticuleTargetPlanet != null)
+				{
+					// レティクルが惑星を向いているとき、対象とする
+					CruiseAssist.TargetPlanet = CruiseAssist.ReticuleTargetPlanet;
+				}
+				else if (CruiseAssist.ReticuleTargetStar != null)
+				{
+					// レティクルが星系を向いているとき、対象とする
+					CruiseAssist.TargetStar = CruiseAssist.ReticuleTargetStar;
+				}
 			}
+
+			VectorLF3 targetPos;
+
+			if (CruiseAssist.TargetPlanet != null)
+			{
+				CruiseAssist.State = CruiseAssistState.TO_PLANET;
+				targetPos = CruiseAssist.TargetPlanet.uPosition - player.uPosition;
+			}
+			else if (CruiseAssist.TargetStar != null)
+			{
+				CruiseAssist.State = CruiseAssistState.TO_STAR;
+				targetPos = CruiseAssist.TargetStar.uPosition - player.uPosition;
+			}
+			else
+			{
+				return;
+			}
+
+			var angle = Vector3.Angle(targetPos, player.uVelocity);
+			var t = 1.6f / Mathf.Max(10f, angle);
+			var speed = player.controller.actionSail.visual_uvel.magnitude;
+			player.uVelocity = Vector3.Slerp(player.uVelocity, targetPos.normalized * speed, t);
 		}
 	}
 }
