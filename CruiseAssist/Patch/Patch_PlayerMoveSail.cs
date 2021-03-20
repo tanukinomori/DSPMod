@@ -15,6 +15,10 @@ namespace Tanukinomori
 			{
 				return;
 			}
+			if (!CruiseAssist.Enable)
+			{
+				return;
+			}
 
 			var astroId = GameMain.mainPlayer.navigation.indicatorAstroId;
 

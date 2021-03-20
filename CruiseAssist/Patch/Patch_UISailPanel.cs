@@ -17,7 +17,7 @@ namespace Tanukinomori
 				MatchForward(true,
 					new CodeMatch(OpCodes.Ldarg_0)); // 0
 
-			//LogManager.Logger.LogInfo("matcher.Pos=" + matcher.Pos);
+			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
 
 			matcher.
 				InsertAndAdvance(Transpilers.EmitDelegate<Action>(
@@ -37,7 +37,7 @@ namespace Tanukinomori
 					new CodeMatch(OpCodes.Ldloc_S),
 					new CodeMatch(OpCodes.Stloc_S)); // 156
 
-			//LogManager.Logger.LogInfo("matcher.Pos=" + matcher.Pos); // 156 + 1 => 157
+			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos); // 156 + 1 => 157
 
 			matcher.
 				Advance(1).
@@ -60,7 +60,7 @@ namespace Tanukinomori
 					new CodeMatch(OpCodes.Ldloc_S),
 					new CodeMatch(OpCodes.Stloc_S)); // 252
 
-			//LogManager.Logger.LogInfo("matcher.Pos=" + matcher.Pos); // 252 + 1 + 4 => 257
+			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos); // 252 + 1 + 4 => 257
 
 			matcher.
 				Advance(1).

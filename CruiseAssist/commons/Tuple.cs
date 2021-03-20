@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Tanukinomori
+﻿namespace Tanukinomori
 {
 	public struct Tuple<T1, T2>
 	{
@@ -15,5 +10,5 @@ namespace Tanukinomori
 			this.v1 = v1;
 			this.v2 = v2;
 		}
-}
+	}
 }

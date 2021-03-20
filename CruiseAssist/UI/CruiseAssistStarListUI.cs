@@ -1,8 +1,6 @@
-﻿using UnityEngine;
+﻿using HarmonyLib;
 using System.Linq;
-using HarmonyLib;
-using System.Collections.Generic;
-using System;
+using UnityEngine;
 
 namespace Tanukinomori
 {
@@ -73,6 +71,9 @@ namespace Tanukinomori
 
 			scrollPos = GUILayout.BeginScrollView(scrollPos);
 
+			GUI.skin.label.alignment = TextAnchor.MiddleLeft;
+			GUI.skin.label.fontSize = CruiseAssistMainUI.FontSize20;
+
 			GameMain.galaxy.stars.Select(star => new Tuple<StarData, double>(star, (star.uPosition - GameMain.mainPlayer.uPosition).magnitude)).OrderBy(tuple => tuple.v2).Do(tuple =>
 			{
 				var star = tuple.v1;
@@ -140,11 +141,6 @@ namespace Tanukinomori
 			GUILayout.BeginHorizontal();
 
 			GUILayout.FlexibleSpace();
-
-			if (GUILayout.Button("Cancel", GUILayout.ExpandWidth(false)))
-			{
-				SelectStar(null, null);
-			}
 
 			if (GUILayout.Button("Close", GUILayout.ExpandWidth(false)))
 			{

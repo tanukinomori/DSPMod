@@ -9,8 +9,9 @@ namespace Tanukinomori
 	{
 		public const string ModGuid = "tanu.CruiseAssist";
 		public const string ModName = "CruiseAssist";
-		public const string ModVersion = "0.0.9";
+		public const string ModVersion = "0.0.10";
 
+		public static bool Enable = true;
 		public static StarData ReticuleTargetStar = null;
 		public static PlanetData ReticuleTargetPlanet = null;
 		public static StarData SelectTargetStar = null;
@@ -41,6 +42,10 @@ namespace Tanukinomori
 			if (CruiseAssistMainUI.Show && !TechTreeShow)
 			{
 				CruiseAssistMainUI.OnGUI();
+				if (CruiseAssistDebugUI.Show)
+				{
+					CruiseAssistDebugUI.OnGUI();
+				}
 				if (CruiseAssistStarListUI.Show)
 				{
 					CruiseAssistStarListUI.OnGUI();

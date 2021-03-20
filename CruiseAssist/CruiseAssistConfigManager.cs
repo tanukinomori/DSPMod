@@ -15,10 +15,16 @@ namespace Tanukinomori
 			{
 				var modVersion = Bind<string>("Base", "ModVersion", CruiseAssist.ModVersion, "Don't change.");
 				modVersion.Value = CruiseAssist.ModVersion;
+				CruiseAssistDebugUI.Show = Bind<bool>("Debug", "DebugWindowShow", false).Value;
+				CruiseAssist.Enable = Bind<bool>("Setting", "Enable", true).Value;
+				var viewModeStr = Bind<string>("Setting", "MainWindowViewMode", CruiseAssistMainUIViewMode.FULL.ToString()).Value;
+				EnumUtils.TryParse<CruiseAssistMainUIViewMode>(viewModeStr, out CruiseAssistMainUI.ViewMode);
 				CruiseAssistMainUI.Rect.x = (float)Bind<int>("State", "MainWindowLeft", 100).Value;
 				CruiseAssistMainUI.Rect.y = (float)Bind<int>("State", "MainWindowTop", 100).Value;
 				CruiseAssistStarListUI.Rect.x = (float)Bind<int>("State", "StarListWindowLeft", 100).Value;
 				CruiseAssistStarListUI.Rect.y = (float)Bind<int>("State", "StarListWindowTop", 100).Value;
+				CruiseAssistDebugUI.Rect.x = (float)Bind<int>("State", "DebugWindowLeft", 100).Value;
+				CruiseAssistDebugUI.Rect.y = (float)Bind<int>("State", "DebugWindowTop", 100).Value;
 				var orphanedEntries = ConfigManager.GetOrphanedEntries();
 				string s;
 				float f;
@@ -38,29 +44,55 @@ namespace Tanukinomori
 			}
 			else if (step == Step.STATE)
 			{
-				ConfigEntry<int> entry;
-				entry = ConfigManager.GetEntry<int>("State", "MainWindowLeft");
-				if (entry.Value != (int)CruiseAssistMainUI.Rect.x)
+				ConfigEntry<bool> boolEntry;
+				ConfigEntry<string> strEntry;
+				ConfigEntry<int> intEntry;
+				boolEntry = ConfigManager.GetEntry<bool>("Setting", "Enable");
+				if (boolEntry.Value != CruiseAssist.Enable)
 				{
-					entry.Value = (int)CruiseAssistMainUI.Rect.x;
+					boolEntry.Value = CruiseAssist.Enable;
 					saveFlag = true;
 				}
-				entry = ConfigManager.GetEntry<int>("State", "MainWindowTop");
-				if (entry.Value != (int)CruiseAssistMainUI.Rect.y)
+				strEntry = ConfigManager.GetEntry<string>("Setting", "MainWindowViewMode");
+				if (strEntry.Value != CruiseAssistMainUI.ViewMode.ToString())
 				{
-					entry.Value = (int)CruiseAssistMainUI.Rect.y;
+					strEntry.Value = CruiseAssistMainUI.ViewMode.ToString();
 					saveFlag = true;
 				}
-				entry = ConfigManager.GetEntry<int>("State", "StarListWindowLeft");
-				if (entry.Value != (int)CruiseAssistStarListUI.Rect.x)
+				intEntry = ConfigManager.GetEntry<int>("State", "MainWindowLeft");
+				if (intEntry.Value != (int)CruiseAssistMainUI.Rect.x)
 				{
-					entry.Value = (int)CruiseAssistStarListUI.Rect.x;
+					intEntry.Value = (int)CruiseAssistMainUI.Rect.x;
 					saveFlag = true;
 				}
-				entry = ConfigManager.GetEntry<int>("State", "StarListWindowTop");
-				if (entry.Value != (int)CruiseAssistStarListUI.Rect.y)
+				intEntry = ConfigManager.GetEntry<int>("State", "MainWindowTop");
+				if (intEntry.Value != (int)CruiseAssistMainUI.Rect.y)
 				{
-					entry.Value = (int)CruiseAssistStarListUI.Rect.y;
+					intEntry.Value = (int)CruiseAssistMainUI.Rect.y;
+					saveFlag = true;
+				}
+				intEntry = ConfigManager.GetEntry<int>("State", "StarListWindowLeft");
+				if (intEntry.Value != (int)CruiseAssistStarListUI.Rect.x)
+				{
+					intEntry.Value = (int)CruiseAssistStarListUI.Rect.x;
+					saveFlag = true;
+				}
+				intEntry = ConfigManager.GetEntry<int>("State", "StarListWindowTop");
+				if (intEntry.Value != (int)CruiseAssistStarListUI.Rect.y)
+				{
+					intEntry.Value = (int)CruiseAssistStarListUI.Rect.y;
+					saveFlag = true;
+				}
+				intEntry = ConfigManager.GetEntry<int>("State", "DebugWindowLeft");
+				if (intEntry.Value != (int)CruiseAssistDebugUI.Rect.x)
+				{
+					intEntry.Value = (int)CruiseAssistDebugUI.Rect.x;
+					saveFlag = true;
+				}
+				intEntry = ConfigManager.GetEntry<int>("State", "DebugWindowTop");
+				if (intEntry.Value != (int)CruiseAssistDebugUI.Rect.y)
+				{
+					intEntry.Value = (int)CruiseAssistDebugUI.Rect.y;
 					saveFlag = true;
 				}
 			}
