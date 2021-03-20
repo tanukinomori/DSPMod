@@ -104,6 +104,11 @@ namespace Tanukinomori
 				}
 			}
 
+			if (GameMain.mainPlayer.controller.input0 != Vector4.zero || GameMain.mainPlayer.controller.input1 != Vector4.zero)
+			{
+				return;
+			}
+
 			VectorLF3 targetPos;
 
 			if (CruiseAssist.TargetPlanet != null)

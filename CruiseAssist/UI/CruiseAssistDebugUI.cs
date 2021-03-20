@@ -64,29 +64,15 @@ namespace Tanukinomori
 			GUILayout.Label($"CruiseAssist.SelectTargetStar.id={CruiseAssist.SelectTargetStar?.id}");
 			GUILayout.Label($"CruiseAssist.SelectTargetPlanet.id={CruiseAssist.SelectTargetPlanet?.id}");
 			GUILayout.Label($"GameMain.mainPlayer.navigation.indicatorAstroId={GameMain.mainPlayer.navigation.indicatorAstroId}");
+			GUILayout.Label($"GameMain.mainPlayer.controller.input0.w={GameMain.mainPlayer.controller.input0.w}");
 			GUILayout.Label($"GameMain.mainPlayer.controller.input0.x={GameMain.mainPlayer.controller.input0.x}");
 			GUILayout.Label($"GameMain.mainPlayer.controller.input0.y={GameMain.mainPlayer.controller.input0.y}");
 			GUILayout.Label($"GameMain.mainPlayer.controller.input0.z={GameMain.mainPlayer.controller.input0.z}");
+			GUILayout.Label($"GameMain.mainPlayer.controller.input1.w={GameMain.mainPlayer.controller.input1.w}");
 			GUILayout.Label($"GameMain.mainPlayer.controller.input1.x={GameMain.mainPlayer.controller.input1.x}");
 			GUILayout.Label($"GameMain.mainPlayer.controller.input1.y={GameMain.mainPlayer.controller.input1.y}");
 			GUILayout.Label($"GameMain.mainPlayer.controller.input1.z={GameMain.mainPlayer.controller.input1.z}");
-			GUILayout.Label($"CruiseAssist.Enable={CruiseAssist.Enable}");
-
-			GUILayout.BeginHorizontal();
-
-			GUI.skin.label.alignment = TextAnchor.MiddleLeft;
-			GUI.skin.label.fontSize = CruiseAssistMainUI.FontSize20;
-
-			if (GUILayout.Button("Enable"))
-			{
-				CruiseAssist.Enable = true;
-			}
-			if (GUILayout.Button("Disable"))
-			{
-				CruiseAssist.Enable = false;
-			}
-
-			GUILayout.EndHorizontal();
+			GUILayout.Label($"VFInput._sailSpeedUp={VFInput._sailSpeedUp}");
 
 			GUILayout.EndVertical();
 

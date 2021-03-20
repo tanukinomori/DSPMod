@@ -76,25 +76,27 @@ namespace Tanukinomori
 			return matcher.InstructionEnumeration();
 		}
 #if false
+		private static string CLASS_NAME = "UISailPanel";
+
 		[HarmonyPatch("_OnCreate"), HarmonyPrefix]
 		public static void OnCreate_Prefix() =>
-			LogManager.Logger.LogInfo("enter UISailPanel._OnCreate");
+			LogManager.LogInfo($"enter {CLASS_NAME}._OnCreate");
 
 		[HarmonyPatch("_OnDestroy"), HarmonyPrefix]
 		public static void OnDestroy_Prefix() =>
-			LogManager.Logger.LogInfo("enter UISailPanel._OnDestroy");
+			LogManager.LogInfo($"enter {CLASS_NAME}._OnDestroy");
 
 		[HarmonyPatch("_OnInit"), HarmonyPrefix]
 		public static void OnInit_Prefix() =>
-			LogManager.Logger.LogInfo("enter UISailPanel._OnInit");
+			LogManager.LogInfo($"enter {CLASS_NAME}._OnInit");
 
 		[HarmonyPatch("_OnFree"), HarmonyPrefix]
 		public static void OnFree_Prefix() =>
-			LogManager.Logger.LogInfo("enter UISailPanel._OnFree");
+			LogManager.LogInfo($"enter {CLASS_NAME}._OnFree");
 
 		[HarmonyPatch("_OnOpen"), HarmonyPrefix]
 		public static void OnOpen_Prefix() =>
-			LogManager.Logger.LogInfo("enter UISailPanel._OnOpen");
+			LogManager.LogInfo($"enter {CLASS_NAME}._OnOpen");
 #endif
 		[HarmonyPatch("_OnClose"), HarmonyPrefix]
 		public static void OnClose_Prefix()

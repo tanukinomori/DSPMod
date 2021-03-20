@@ -6,7 +6,9 @@ namespace Tanukinomori
 	{
 		public static CruiseAssistMainUIViewMode ViewMode = CruiseAssistMainUIViewMode.FULL;
 
+		public static int FontSize14 = 14;
 		public static int FontSize16 = 16;
+		public static int FontSize18 = 18;
 		public static int FontSize20 = 20;
 		public static float WindowWidthFull = 560f;
 		public static float WindowHeightFull = 200f;
@@ -217,6 +219,7 @@ namespace Tanukinomori
 
 				GUI.skin.button.alignment = TextAnchor.MiddleCenter;
 				GUI.skin.button.fixedWidth = 60f;
+				GUI.skin.button.fontSize = CruiseAssistMainUI.FontSize14;
 
 				GUILayout.BeginVertical();
 
