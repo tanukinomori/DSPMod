@@ -1,4 +1,5 @@
 ﻿using BepInEx.Configuration;
+using System.Linq;
 
 namespace Tanukinomori
 {
@@ -23,6 +24,7 @@ namespace Tanukinomori
 				CruiseAssistMainUI.Rect.y = (float)Bind<int>("State", "MainWindowTop", 100).Value;
 				CruiseAssistStarListUI.Rect.x = (float)Bind<int>("State", "StarListWindowLeft", 100).Value;
 				CruiseAssistStarListUI.Rect.y = (float)Bind<int>("State", "StarListWindowTop", 100).Value;
+				CruiseAssistStarListUI.ListSelected = Bind<int>("State", "StarListWindowListSelected", 0).Value;
 				CruiseAssistDebugUI.Rect.x = (float)Bind<int>("State", "DebugWindowLeft", 100).Value;
 				CruiseAssistDebugUI.Rect.y = (float)Bind<int>("State", "DebugWindowTop", 100).Value;
 				var orphanedEntries = ConfigManager.GetOrphanedEntries();
@@ -36,11 +38,11 @@ namespace Tanukinomori
 				{
 					CruiseAssistMainUI.Rect.y = f;
 				}
-				orphanedEntries.Clear();
 				saveFlag = true;
 			}
 			else if (step == Step.GAME_MAIN_BEGIN)
 			{
+				CruiseAssist.History = Bind<string>("Save", $"History_{GameMain.galaxy.seed}", "").Value.Split(',').Where(str => int.TryParse(str, out _)).Select(int.Parse).ToList();
 			}
 			else if (step == Step.STATE)
 			{
@@ -83,6 +85,12 @@ namespace Tanukinomori
 					intEntry.Value = (int)CruiseAssistStarListUI.Rect.y;
 					saveFlag = true;
 				}
+				intEntry = ConfigManager.GetEntry<int>("State", "StarListWindowListSelected");
+				if (intEntry.Value != CruiseAssistStarListUI.ListSelected)
+				{
+					intEntry.Value = CruiseAssistStarListUI.ListSelected;
+					saveFlag = true;
+				}
 				intEntry = ConfigManager.GetEntry<int>("State", "DebugWindowLeft");
 				if (intEntry.Value != (int)CruiseAssistDebugUI.Rect.x)
 				{
@@ -93,6 +101,17 @@ namespace Tanukinomori
 				if (intEntry.Value != (int)CruiseAssistDebugUI.Rect.y)
 				{
 					intEntry.Value = (int)CruiseAssistDebugUI.Rect.y;
+					saveFlag = true;
+				}
+				strEntry = ConfigManager.GetEntry<string>("Save", $"History_{GameMain.galaxy.seed}");
+				string value = "";
+				if (CruiseAssist.History.Count > 0)
+				{
+					value = CruiseAssist.History.Select(id => id.ToString()).Aggregate((a, b) => a + "," + b);
+				}
+				if (strEntry.Value != value)
+				{
+					strEntry.Value = value;
 					saveFlag = true;
 				}
 			}
