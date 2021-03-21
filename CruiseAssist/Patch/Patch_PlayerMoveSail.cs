@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System.Linq;
 using UnityEngine;
 
 namespace Tanukinomori
@@ -15,6 +16,20 @@ namespace Tanukinomori
 			{
 				return;
 			}
+
+			if (GameMain.localPlanet != null)
+			{
+				if (CruiseAssist.History.Count == 0 || CruiseAssist.History.Last() != GameMain.localPlanet.id)
+				{
+					if (CruiseAssist.History.Count >= 128)
+					{
+						CruiseAssist.History.RemoveAt(0);
+					}
+					CruiseAssist.History.Add(GameMain.localPlanet.id);
+					ConfigManager.CheckConfig(ConfigManager.Step.STATE);
+				}
+			}
+
 			if (!CruiseAssist.Enable)
 			{
 				return;

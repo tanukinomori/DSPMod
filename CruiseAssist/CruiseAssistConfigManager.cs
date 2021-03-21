@@ -1,4 +1,6 @@
 ﻿using BepInEx.Configuration;
+using System.Linq;
+using Tanukinomori.commons;
 
 namespace Tanukinomori
 {
@@ -23,6 +25,7 @@ namespace Tanukinomori
 				CruiseAssistMainUI.Rect.y = (float)Bind<int>("State", "MainWindowTop", 100).Value;
 				CruiseAssistStarListUI.Rect.x = (float)Bind<int>("State", "StarListWindowLeft", 100).Value;
 				CruiseAssistStarListUI.Rect.y = (float)Bind<int>("State", "StarListWindowTop", 100).Value;
+				CruiseAssistStarListUI.ListSelected = Bind<int>("State", "StarListWindowListSelected", 0).Value;
 				CruiseAssistDebugUI.Rect.x = (float)Bind<int>("State", "DebugWindowLeft", 100).Value;
 				CruiseAssistDebugUI.Rect.y = (float)Bind<int>("State", "DebugWindowTop", 100).Value;
 				var orphanedEntries = ConfigManager.GetOrphanedEntries();
@@ -36,17 +39,18 @@ namespace Tanukinomori
 				{
 					CruiseAssistMainUI.Rect.y = f;
 				}
-				orphanedEntries.Clear();
 				saveFlag = true;
 			}
 			else if (step == Step.GAME_MAIN_BEGIN)
 			{
+				CruiseAssist.History = ListUtils.Parse(Bind<string>("Save", $"History_{GameMain.galaxy.seed}", "").Value);
 			}
 			else if (step == Step.STATE)
 			{
 				ConfigEntry<bool> boolEntry;
 				ConfigEntry<string> strEntry;
 				ConfigEntry<int> intEntry;
+				string strValue;
 				boolEntry = ConfigManager.GetEntry<bool>("Setting", "Enable");
 				if (boolEntry.Value != CruiseAssist.Enable)
 				{
@@ -83,6 +87,12 @@ namespace Tanukinomori
 					intEntry.Value = (int)CruiseAssistStarListUI.Rect.y;
 					saveFlag = true;
 				}
+				intEntry = ConfigManager.GetEntry<int>("State", "StarListWindowListSelected");
+				if (intEntry.Value != CruiseAssistStarListUI.ListSelected)
+				{
+					intEntry.Value = CruiseAssistStarListUI.ListSelected;
+					saveFlag = true;
+				}
 				intEntry = ConfigManager.GetEntry<int>("State", "DebugWindowLeft");
 				if (intEntry.Value != (int)CruiseAssistDebugUI.Rect.x)
 				{
@@ -95,12 +105,19 @@ namespace Tanukinomori
 					intEntry.Value = (int)CruiseAssistDebugUI.Rect.y;
 					saveFlag = true;
 				}
+				strEntry = ConfigManager.GetEntry<string>("Save", $"History_{GameMain.galaxy.seed}");
+				strValue = ListUtils.ToString(CruiseAssist.History);
+				if (strEntry.Value != strValue)
+				{
+					strEntry.Value = strValue;
+					saveFlag = true;
+				}
 			}
 			if (saveFlag)
 			{
 				Save(false);
 			}
-			if (step == Step.AWAKE)
+			if (step == Step.AWAKE || step == Step.GAME_MAIN_BEGIN)
 			{
 				LogManager.LogInfo("config reloaded.");
 			}

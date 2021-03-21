@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using Tanukinomori.commons;
+using UnityEngine;
 
 namespace Tanukinomori
 {
@@ -73,6 +75,9 @@ namespace Tanukinomori
 			GUILayout.Label($"GameMain.mainPlayer.controller.input1.y={GameMain.mainPlayer.controller.input1.y}");
 			GUILayout.Label($"GameMain.mainPlayer.controller.input1.z={GameMain.mainPlayer.controller.input1.z}");
 			GUILayout.Label($"VFInput._sailSpeedUp={VFInput._sailSpeedUp}");
+			GUILayout.Label($"CruiseAssist.Enable={CruiseAssist.Enable}");
+			GUILayout.Label($"CruiseAssist.History={CruiseAssist.History.Count()}");
+			GUILayout.Label($"CruiseAssist.History={ListUtils.ToString(CruiseAssist.History)}");
 
 			GUILayout.EndVertical();
 

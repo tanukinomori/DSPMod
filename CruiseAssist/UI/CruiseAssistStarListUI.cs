@@ -14,6 +14,7 @@ namespace Tanukinomori
 #endif
 		public static bool Show = false;
 		public static Rect Rect = new Rect(0f, 0f, WindowWidth, WindowHeight);
+		public static int ListSelected;
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
@@ -65,76 +66,126 @@ namespace Tanukinomori
 
 		public static void WindowFunction(int windowId)
 		{
-			GUI.skin.label.fontSize = CruiseAssistMainUI.FontSize16;
-
 			GUILayout.BeginVertical();
+
+			GUILayout.BeginHorizontal();
+
+			GUI.skin.button.alignment = TextAnchor.MiddleCenter;
+			GUI.skin.button.fixedWidth = 120f;
+			GUI.skin.button.fontSize = CruiseAssistMainUI.FontSize18;
+
+			var style = new GUIStyle(GUI.skin.button);
+
+			string[] texts = { "Normal", "History" };
+			var selected = GUILayout.Toolbar(ListSelected, texts);
+			if (selected != ListSelected)
+			{
+				ListSelected = selected;
+				ConfigManager.CheckConfig(ConfigManager.Step.STATE);
+			}
+
+			GUILayout.EndHorizontal();
 
 			scrollPos = GUILayout.BeginScrollView(scrollPos);
 
 			GUI.skin.label.alignment = TextAnchor.MiddleLeft;
 			GUI.skin.label.fontSize = CruiseAssistMainUI.FontSize20;
+			GUI.skin.button.fontSize = CruiseAssistMainUI.FontSize16;
+			GUI.skin.button.fixedWidth = 0f;
 
-			GameMain.galaxy.stars.Select(star => new Tuple<StarData, double>(star, (star.uPosition - GameMain.mainPlayer.uPosition).magnitude)).OrderBy(tuple => tuple.v2).Do(tuple =>
+			if (ListSelected == 0)
 			{
-				var star = tuple.v1;
-				var starName = CruiseAssist.GetStarName(star);
-				if (GameMain.localStar != null && star.id == GameMain.localStar.id)
+				GameMain.galaxy.stars.Select(star => new Tuple<StarData, double>(star, (star.uPosition - GameMain.mainPlayer.uPosition).magnitude)).OrderBy(tuple => tuple.v2).Do(tuple =>
 				{
-					GameMain.localStar.planets.
-						Select(planet => new Tuple<PlanetData, double>(planet, (planet.uPosition - GameMain.mainPlayer.uPosition).magnitude)).
-						AddItem(new Tuple<PlanetData, double>(null, (star.uPosition - GameMain.mainPlayer.uPosition).magnitude)).
-						OrderBy(tuple2 => tuple2.v2).
-						Do(tuple2 =>
+					var star = tuple.v1;
+					var starName = CruiseAssist.GetStarName(star);
+					if (GameMain.localStar != null && star.id == GameMain.localStar.id)
+					{
+						GameMain.localStar.planets.
+							Select(planet => new Tuple<PlanetData, double>(planet, (planet.uPosition - GameMain.mainPlayer.uPosition).magnitude)).
+							AddItem(new Tuple<PlanetData, double>(null, (star.uPosition - GameMain.mainPlayer.uPosition).magnitude)).
+							OrderBy(tuple2 => tuple2.v2).
+							Do(tuple2 =>
+							{
+								var planet = tuple2.v1;
+								GUILayout.BeginHorizontal();
+								GUI.color = Color.white;
+								if (planet == null)
+								{
+									if (CruiseAssist.SelectTargetPlanet == null && CruiseAssist.SelectTargetStar != null && star.id == CruiseAssist.SelectTargetStar.id)
+									{
+										GUI.color = Color.cyan;
+									}
+									GUILayout.Label(starName);
+								}
+								else
+								{
+									if (CruiseAssist.SelectTargetPlanet != null && planet.id == CruiseAssist.SelectTargetPlanet.id)
+									{
+										GUI.color = Color.cyan;
+									}
+									GUILayout.Label(starName + " - " + CruiseAssist.GetPlanetName(planet));
+								}
+								GUILayout.FlexibleSpace();
+								GUILayout.Label(CruiseAssistMainUI.RangeToString(tuple2.v2));
+								GUI.color = Color.white;
+								if (GUILayout.Button("SET"))
+								{
+									SelectStar(star, planet);
+								}
+								GUILayout.EndHorizontal();
+							});
+					}
+					else
+					{
+						GUILayout.BeginHorizontal();
+						GUI.color = Color.white;
+						if (CruiseAssist.SelectTargetStar != null && star.id == CruiseAssist.SelectTargetStar.id)
 						{
-							var planet = tuple2.v1;
-							GUILayout.BeginHorizontal();
-							GUI.color = Color.white;
-							if (planet == null)
-							{
-								if (CruiseAssist.SelectTargetPlanet == null && CruiseAssist.SelectTargetStar != null && star.id == CruiseAssist.SelectTargetStar.id)
-								{
-									GUI.color = Color.cyan;
-								}
-								GUILayout.Label(starName);
-							}
-							else
-							{
-								if (CruiseAssist.SelectTargetPlanet != null && planet.id == CruiseAssist.SelectTargetPlanet.id)
-								{
-									GUI.color = Color.cyan;
-								}
-								GUILayout.Label(starName + " - " + CruiseAssist.GetPlanetName(planet));
-							}
-							GUILayout.FlexibleSpace();
-							GUILayout.Label(CruiseAssistMainUI.RangeToString(tuple2.v2));
-							GUI.color = Color.white;
-							if (GUILayout.Button("SET"))
-							{
-								SelectStar(star, planet);
-							}
-							GUILayout.EndHorizontal();
-						});
-				}
-				else
+							GUI.color = Color.cyan;
+						}
+						GUILayout.Label(starName);
+						GUILayout.FlexibleSpace();
+						GUILayout.Label(CruiseAssistMainUI.RangeToString(tuple.v2));
+						GUI.color = Color.white;
+						if (GUILayout.Button("SET"))
+						{
+							SelectStar(star, null);
+						}
+						GUI.color = Color.white;
+						GUILayout.EndHorizontal();
+					}
+				});
+			}
+			else if (ListSelected == 1)
+			{
+				bool highlighted = false;
+
+				CruiseAssist.History.Reverse<int>().Do(id =>
 				{
+					var planet = GameMain.galaxy.PlanetById(id);
+					var star = planet.star;
+					var starName = CruiseAssist.GetStarName(star);
+					var range = (planet.uPosition - GameMain.mainPlayer.uPosition).magnitude;
 					GUILayout.BeginHorizontal();
 					GUI.color = Color.white;
-					if (CruiseAssist.SelectTargetStar != null && star.id == CruiseAssist.SelectTargetStar.id)
+					if (!highlighted && CruiseAssist.SelectTargetPlanet != null && planet.id == CruiseAssist.SelectTargetPlanet.id)
 					{
 						GUI.color = Color.cyan;
+						highlighted = true;
 					}
-					GUILayout.Label(starName);
+					GUILayout.Label(starName + " - " + CruiseAssist.GetPlanetName(planet));
 					GUILayout.FlexibleSpace();
-					GUILayout.Label(CruiseAssistMainUI.RangeToString(tuple.v2));
+					GUILayout.Label(CruiseAssistMainUI.RangeToString(range));
 					GUI.color = Color.white;
 					if (GUILayout.Button("SET"))
 					{
-						SelectStar(star, null);
+						SelectStar(star, planet);
 					}
 					GUI.color = Color.white;
 					GUILayout.EndHorizontal();
-				}
-			});
+				});
+			}
 
 			GUILayout.EndScrollView();
 

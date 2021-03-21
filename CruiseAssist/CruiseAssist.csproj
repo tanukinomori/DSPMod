@@ -66,6 +66,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="commons\ListUtils.cs" />
     <Compile Include="CruiseAssistConfigManager.cs" />
     <Compile Include="CruiseAssist.cs" />
     <Compile Include="commons\ConfigManager.cs" />
@@ -87,10 +88,12 @@
     <Content Include="image\image001.png" />
     <Content Include="image\image002.png" />
     <Content Include="image\image003.png" />
+    <Content Include="image\image004.png" />
+    <Content Include="image\image005.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /y $(TargetPath) C:\Users\tanu\AppData\Roaming\r2modmanPlus-local\DysonSphereProgram\profiles\Default\BepInEx\scripts
+    <PostBuildEvent>copy /y $(TargetPath) C:\Users\tanu\AppData\Roaming\r2modmanPlus-local\DysonSphereProgram\profiles\Default\BepInEx\plugins
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

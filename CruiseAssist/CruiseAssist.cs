@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using HarmonyLib;
 using System;
+using System.Collections.Generic;
 
 namespace Tanukinomori
 {
@@ -9,7 +10,7 @@ namespace Tanukinomori
 	{
 		public const string ModGuid = "tanu.CruiseAssist";
 		public const string ModName = "CruiseAssist";
-		public const string ModVersion = "0.0.11";
+		public const string ModVersion = "0.0.12";
 
 		public static bool Enable = true;
 		public static StarData ReticuleTargetStar = null;
@@ -21,6 +22,8 @@ namespace Tanukinomori
 		public static PlanetData TargetPlanet = null;
 		public static CruiseAssistState State = CruiseAssistState.INACTIVE;
 		public static bool TechTreeShow = false;
+
+		public static List<int> History = new List<int>();
 
 		public static Func<StarData, string> GetStarName = star => star.displayName;
 		public static Func<PlanetData, string> GetPlanetName = planet => planet.displayName;
