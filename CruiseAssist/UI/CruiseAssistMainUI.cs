@@ -4,24 +4,18 @@ namespace Tanukinomori
 {
 	public class CruiseAssistMainUI
 	{
+		public static int wIdx = 0;
+
 		public static CruiseAssistMainUIViewMode ViewMode = CruiseAssistMainUIViewMode.FULL;
 
-		public static int FontSize14 = 14;
-		public static int FontSize16 = 16;
-		public static int FontSize18 = 18;
-		public static int FontSize20 = 20;
 		public static float WindowWidthFull = 560f;
 		public static float WindowHeightFull = 200f;
 		public static float WindowWidthMini = 360f;
 		public static float WindowHeightMini = 76f;
-#if false
-		public static int FontSize16 = 14;
-		public static int FontSize20 = 15;
-		public static float WindowWidth = 420f;
-		public static float WindowHeight = 90f;
-#endif
-		public static bool Show = false;
-		public static Rect Rect = new Rect(0f, 0f, WindowWidthFull, WindowHeightFull);
+
+		public static Rect[] Rect = {
+			new Rect(0f, 0f, WindowWidthFull, WindowHeightFull),
+			new Rect(0f, 0f, WindowWidthFull, WindowHeightFull) };
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
@@ -32,47 +26,47 @@ namespace Tanukinomori
 			switch (ViewMode)
 			{
 				case CruiseAssistMainUIViewMode.FULL:
-					Rect.width = WindowWidthFull;
-					Rect.height = WindowHeightFull;
+					Rect[wIdx].width = WindowWidthFull;
+					Rect[wIdx].height = WindowHeightFull;
 					break;
 				case CruiseAssistMainUIViewMode.MINI:
-					Rect.width = WindowWidthMini;
-					Rect.height = WindowHeightMini;
+					Rect[wIdx].width = WindowWidthMini;
+					Rect[wIdx].height = WindowHeightMini;
 					break;
 			}
 
 			GUI.skin.window.fontSize = 11;
 
-			Rect = GUILayout.Window(99030291, Rect, WindowFunction, "CruiseAssist");
+			Rect[wIdx] = GUILayout.Window(99030291, Rect[wIdx], WindowFunction, "CruiseAssist");
 
-			if (Rect.x < 0)
+			if (Rect[wIdx].x < 0)
 			{
-				Rect.x = 0;
+				Rect[wIdx].x = 0;
 			}
-			else if (Screen.width < Rect.xMax)
+			else if (Screen.width < Rect[wIdx].xMax)
 			{
-				Rect.x = Screen.width - Rect.width;
+				Rect[wIdx].x = Screen.width - Rect[wIdx].width;
 			}
 
-			if (Rect.y < 0)
+			if (Rect[wIdx].y < 0)
 			{
-				Rect.y = 0;
+				Rect[wIdx].y = 0;
 			}
-			else if (Screen.height < Rect.yMax)
+			else if (Screen.height < Rect[wIdx].yMax)
 			{
-				Rect.y = Screen.height - Rect.height;
+				Rect[wIdx].y = Screen.height - Rect[wIdx].height;
 			}
 
 			if (lastCheckWindowLeft != float.MinValue)
 			{
-				if (Rect.x != lastCheckWindowLeft || Rect.y != lastCheckWindowTop)
+				if (Rect[wIdx].x != lastCheckWindowLeft || Rect[wIdx].y != lastCheckWindowTop)
 				{
 					nextCheckGameTick = GameMain.gameTick + 300;
 				}
 			}
 
-			lastCheckWindowLeft = Rect.x;
-			lastCheckWindowTop = Rect.y;
+			lastCheckWindowLeft = Rect[wIdx].x;
+			lastCheckWindowTop = Rect[wIdx].y;
 
 			if (nextCheckGameTick <= GameMain.gameTick)
 			{
@@ -93,7 +87,7 @@ namespace Tanukinomori
 				{
 					GUI.color = Color.white;
 					GUI.skin.label.alignment = TextAnchor.UpperLeft;
-					GUI.skin.label.fontSize = FontSize16;
+					GUI.skin.label.fontSize = 16;
 
 					if (CruiseAssist.State == CruiseAssistState.TO_STAR)
 					{
@@ -114,7 +108,7 @@ namespace Tanukinomori
 				GUILayout.BeginVertical();
 				{
 					GUI.skin.label.alignment = TextAnchor.MiddleLeft;
-					GUI.skin.label.fontSize = FontSize20;
+					GUI.skin.label.fontSize = 20;
 
 					if (CruiseAssist.TargetStar != null)
 					{
@@ -163,7 +157,7 @@ namespace Tanukinomori
 					}
 
 					GUI.skin.label.alignment = TextAnchor.MiddleRight;
-					GUI.skin.label.fontSize = FontSize16;
+					GUI.skin.label.fontSize = 16;
 					if (CruiseAssist.TargetStar != null)
 					{
 						if (CruiseAssist.State == CruiseAssistState.TO_STAR)
@@ -201,7 +195,7 @@ namespace Tanukinomori
 			GUILayout.BeginHorizontal();
 			{
 				GUI.skin.label.alignment = TextAnchor.MiddleLeft;
-				GUI.skin.label.fontSize = FontSize20;
+				GUI.skin.label.fontSize = 20;
 
 				if (CruiseAssist.State == CruiseAssistState.INACTIVE)
 				{
@@ -219,7 +213,7 @@ namespace Tanukinomori
 
 				GUI.skin.button.alignment = TextAnchor.MiddleCenter;
 				GUI.skin.button.fixedWidth = 60f;
-				GUI.skin.button.fontSize = CruiseAssistMainUI.FontSize14;
+				GUI.skin.button.fontSize = 14;
 
 				GUILayout.BeginVertical();
 
@@ -249,7 +243,7 @@ namespace Tanukinomori
 
 				if (GUILayout.Button("StarList"))
 				{
-					CruiseAssistStarListUI.Show = !CruiseAssistStarListUI.Show;
+					CruiseAssistStarListUI.Show[wIdx] = !CruiseAssistStarListUI.Show[wIdx];
 				}
 
 				if (GUILayout.Button("Cancel"))

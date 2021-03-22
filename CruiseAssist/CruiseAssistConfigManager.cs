@@ -17,33 +17,35 @@ namespace Tanukinomori
 			{
 				var modVersion = Bind<string>("Base", "ModVersion", CruiseAssist.ModVersion, "Don't change.");
 				modVersion.Value = CruiseAssist.ModVersion;
-				CruiseAssistDebugUI.Show = Bind<bool>("Debug", "DebugWindowShow", false).Value;
-				CruiseAssist.Enable = Bind<bool>("Setting", "Enable", true).Value;
-				var viewModeStr = Bind<string>("Setting", "MainWindowViewMode", CruiseAssistMainUIViewMode.FULL.ToString()).Value;
-				EnumUtils.TryParse<CruiseAssistMainUIViewMode>(viewModeStr, out CruiseAssistMainUI.ViewMode);
-				CruiseAssistMainUI.Rect.x = (float)Bind<int>("State", "MainWindowLeft", 100).Value;
-				CruiseAssistMainUI.Rect.y = (float)Bind<int>("State", "MainWindowTop", 100).Value;
-				CruiseAssistStarListUI.Rect.x = (float)Bind<int>("State", "StarListWindowLeft", 100).Value;
-				CruiseAssistStarListUI.Rect.y = (float)Bind<int>("State", "StarListWindowTop", 100).Value;
-				CruiseAssistStarListUI.ListSelected = Bind<int>("State", "StarListWindowListSelected", 0).Value;
-				CruiseAssistDebugUI.Rect.x = (float)Bind<int>("State", "DebugWindowLeft", 100).Value;
-				CruiseAssistDebugUI.Rect.y = (float)Bind<int>("State", "DebugWindowTop", 100).Value;
 				var orphanedEntries = ConfigManager.GetOrphanedEntries();
-				string s;
-				float f;
-				if (orphanedEntries.TryGetValue(new ConfigDefinition("State", "InfoWindowLeft"), out s) && float.TryParse(s, out f))
-				{
-					CruiseAssistMainUI.Rect.x = f;
-				}
-				if (orphanedEntries.TryGetValue(new ConfigDefinition("State", "InfoWindowTop"), out s) && float.TryParse(s, out f))
-				{
-					CruiseAssistMainUI.Rect.y = f;
-				}
+				Migration("State", "MainWindow0Left", 100, "State", "InfoWindowLeft", orphanedEntries);
+				Migration("State", "MainWindow0Top", 100, "State", "InfoWindowTop", orphanedEntries);
+				Migration("State", "MainWindow0Left", 100, "State", "MainWindowLeft", orphanedEntries);
+				Migration("State", "MainWindow0Top", 100, "State", "MainWindowTop", orphanedEntries);
+				Migration("State", "StarListWindow0Left", 100, "State", "StarListWindowLeft", orphanedEntries);
+				Migration("State", "StarListWindow0Top", 100, "State", "StarListWindowTop", orphanedEntries);
 				saveFlag = true;
 			}
-			else if (step == Step.GAME_MAIN_BEGIN)
+			if (step == Step.AWAKE || step == Step.GAME_MAIN_BEGIN)
 			{
-				CruiseAssist.History = ListUtils.Parse(Bind<string>("Save", $"History_{GameMain.galaxy.seed}", "").Value);
+				CruiseAssistDebugUI.Show = Bind("Debug", "DebugWindowShow", false).Value;
+				CruiseAssist.Enable = Bind("Setting", "Enable", true).Value;
+				var viewModeStr = Bind("Setting", "MainWindowViewMode", CruiseAssistMainUIViewMode.FULL.ToString()).Value;
+				EnumUtils.TryParse<CruiseAssistMainUIViewMode>(viewModeStr, out CruiseAssistMainUI.ViewMode);
+				for (int i = 0; i < 2; ++i)
+				{
+					CruiseAssistMainUI.Rect[i].x = (float)Bind("State", $"MainWindow{i}Left", 100).Value;
+					CruiseAssistMainUI.Rect[i].y = (float)Bind("State", $"MainWindow{i}Top", 100).Value;
+					CruiseAssistStarListUI.Rect[i].x = (float)Bind("State", $"StarListWindow{i}Left", 100).Value;
+					CruiseAssistStarListUI.Rect[i].y = (float)Bind("State", $"StarListWindow{i}Top", 100).Value;
+				}
+				CruiseAssistStarListUI.ListSelected = Bind("State", "StarListWindowListSelected", 0).Value;
+				CruiseAssistDebugUI.Rect.x = (float)Bind("State", "DebugWindowLeft", 100).Value;
+				CruiseAssistDebugUI.Rect.y = (float)Bind("State", "DebugWindowTop", 100).Value;
+				if (GameMain.galaxy != null)
+				{
+					CruiseAssist.History = ListUtils.Parse(Bind("Save", $"History_{GameMain.galaxy.seed}", "").Value);
+				}
 			}
 			else if (step == Step.STATE)
 			{
@@ -63,29 +65,32 @@ namespace Tanukinomori
 					strEntry.Value = CruiseAssistMainUI.ViewMode.ToString();
 					saveFlag = true;
 				}
-				intEntry = ConfigManager.GetEntry<int>("State", "MainWindowLeft");
-				if (intEntry.Value != (int)CruiseAssistMainUI.Rect.x)
+				for (int i = 0; i < 2; ++i)
 				{
-					intEntry.Value = (int)CruiseAssistMainUI.Rect.x;
-					saveFlag = true;
-				}
-				intEntry = ConfigManager.GetEntry<int>("State", "MainWindowTop");
-				if (intEntry.Value != (int)CruiseAssistMainUI.Rect.y)
-				{
-					intEntry.Value = (int)CruiseAssistMainUI.Rect.y;
-					saveFlag = true;
-				}
-				intEntry = ConfigManager.GetEntry<int>("State", "StarListWindowLeft");
-				if (intEntry.Value != (int)CruiseAssistStarListUI.Rect.x)
-				{
-					intEntry.Value = (int)CruiseAssistStarListUI.Rect.x;
-					saveFlag = true;
-				}
-				intEntry = ConfigManager.GetEntry<int>("State", "StarListWindowTop");
-				if (intEntry.Value != (int)CruiseAssistStarListUI.Rect.y)
-				{
-					intEntry.Value = (int)CruiseAssistStarListUI.Rect.y;
-					saveFlag = true;
+					intEntry = ConfigManager.GetEntry<int>("State", $"MainWindow{i}Left");
+					if (intEntry.Value != (int)CruiseAssistMainUI.Rect[i].x)
+					{
+						intEntry.Value = (int)CruiseAssistMainUI.Rect[i].x;
+						saveFlag = true;
+					}
+					intEntry = ConfigManager.GetEntry<int>("State", $"MainWindow{i}Top");
+					if (intEntry.Value != (int)CruiseAssistMainUI.Rect[i].y)
+					{
+						intEntry.Value = (int)CruiseAssistMainUI.Rect[i].y;
+						saveFlag = true;
+					}
+					intEntry = ConfigManager.GetEntry<int>("State", $"StarListWindow{i}Left");
+					if (intEntry.Value != (int)CruiseAssistStarListUI.Rect[i].x)
+					{
+						intEntry.Value = (int)CruiseAssistStarListUI.Rect[i].x;
+						saveFlag = true;
+					}
+					intEntry = ConfigManager.GetEntry<int>("State", $"StarListWindow{i}Top");
+					if (intEntry.Value != (int)CruiseAssistStarListUI.Rect[i].y)
+					{
+						intEntry.Value = (int)CruiseAssistStarListUI.Rect[i].y;
+						saveFlag = true;
+					}
 				}
 				intEntry = ConfigManager.GetEntry<int>("State", "StarListWindowListSelected");
 				if (intEntry.Value != CruiseAssistStarListUI.ListSelected)

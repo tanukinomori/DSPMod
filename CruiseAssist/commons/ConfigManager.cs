@@ -53,6 +53,17 @@ namespace Tanukinomori
 		public static Dictionary<ConfigDefinition, string> GetOrphanedEntries() =>
 			(Dictionary<ConfigDefinition, string>)AccessTools.Property(typeof(ConfigFile), "OrphanedEntries").GetValue(Config, null);
 
+		public static void Migration<T>(string newSection, string newKey, T defaultValue, string oldSection, string oldKey, Dictionary<ConfigDefinition, string> orphanedEntries)
+		{
+			var oldDef = new ConfigDefinition(oldSection, oldKey);
+			if (orphanedEntries.TryGetValue(oldDef, out var s))
+			{
+				LogManager.LogInfo($"migration {oldSection}.{oldKey}({s}) => {newSection}.{newKey}");
+				Bind(newSection, newKey, defaultValue).SetSerializedValue(s);
+				orphanedEntries.Remove(oldDef);
+			}
+		}
+
 		public static void Save(bool clearOrphanedEntries = true)
 		{
 			if (clearOrphanedEntries)

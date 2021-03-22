@@ -6,7 +6,7 @@ namespace Tanukinomori
 	{
 		public static bool TryParse<TEnum>(string value, out TEnum result)
 		{
-			if (!Enum.IsDefined(typeof(TEnum), value))
+			if (value == null || !Enum.IsDefined(typeof(TEnum), value))
 			{
 				result = (TEnum)Enum.GetValues(typeof(TEnum)).GetValue(0);
 				return false;

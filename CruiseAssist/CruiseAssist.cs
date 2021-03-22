@@ -2,6 +2,8 @@
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Tanukinomori.Patch;
 
 namespace Tanukinomori
 {
@@ -10,7 +12,7 @@ namespace Tanukinomori
 	{
 		public const string ModGuid = "tanu.CruiseAssist";
 		public const string ModName = "CruiseAssist";
-		public const string ModVersion = "0.0.12";
+		public const string ModVersion = "0.0.13";
 
 		public static bool Enable = true;
 		public static StarData ReticuleTargetStar = null;
@@ -21,7 +23,6 @@ namespace Tanukinomori
 		public static StarData TargetStar = null;
 		public static PlanetData TargetPlanet = null;
 		public static CruiseAssistState State = CruiseAssistState.INACTIVE;
-		public static bool TechTreeShow = false;
 
 		public static List<int> History = new List<int>();
 
@@ -36,22 +37,68 @@ namespace Tanukinomori
 			var harmony = new Harmony($"{ModGuid}.Patch");
 			harmony.PatchAll(typeof(Patch_GameMain));
 			harmony.PatchAll(typeof(Patch_UISailPanel));
-			harmony.PatchAll(typeof(Patch_UITechTree));
+			harmony.PatchAll(typeof(Patch_UIStarmap));
 			harmony.PatchAll(typeof(Patch_PlayerMoveSail));
 		}
 
 		public void OnGUI()
 		{
-			if (CruiseAssistMainUI.Show && !TechTreeShow)
+			if (DSPGame.IsMenuDemo || GameMain.mainPlayer == null)
 			{
+				return;
+			}
+			var uiGame = UIRoot.instance.uiGame;
+			if (uiGame.techTree.active || uiGame.escMenu.active || uiGame.hideAllUI0 || uiGame.hideAllUI1)
+			{
+				return;
+			}
+			if (GameMain.mainPlayer.sailing || uiGame.starmap.active)
+			{
+				Check();
+
+				CruiseAssistMainUI.wIdx = uiGame.starmap.active ? 1 : 0;
+
 				CruiseAssistMainUI.OnGUI();
+				if (CruiseAssistStarListUI.Show[CruiseAssistMainUI.wIdx])
+				{
+					CruiseAssistStarListUI.OnGUI();
+				}
 				if (CruiseAssistDebugUI.Show)
 				{
 					CruiseAssistDebugUI.OnGUI();
 				}
-				if (CruiseAssistStarListUI.Show)
+			}
+		}
+
+		private void Check()
+		{
+			var astroId = GameMain.mainPlayer.navigation.indicatorAstroId;
+
+			if (CruiseAssist.SelectTargetAstroId != astroId)
+			{
+				CruiseAssist.SelectTargetAstroId = astroId;
+				if (astroId % 100 != 0)
 				{
-					CruiseAssistStarListUI.OnGUI();
+					CruiseAssist.SelectTargetPlanet = GameMain.galaxy.PlanetById(astroId);
+					CruiseAssist.SelectTargetStar = CruiseAssist.SelectTargetPlanet.star;
+				}
+				else
+				{
+					CruiseAssist.SelectTargetPlanet = null;
+					CruiseAssist.SelectTargetStar = GameMain.galaxy.StarById(astroId / 100);
+				}
+			}
+
+			if (GameMain.localPlanet != null)
+			{
+				if (CruiseAssist.History.Count == 0 || CruiseAssist.History.Last() != GameMain.localPlanet.id)
+				{
+					if (CruiseAssist.History.Count >= 128)
+					{
+						CruiseAssist.History.RemoveAt(0);
+					}
+					CruiseAssist.History.Add(GameMain.localPlanet.id);
+					ConfigManager.CheckConfig(ConfigManager.Step.STATE);
 				}
 			}
 		}

@@ -7,11 +7,13 @@ namespace Tanukinomori
 	public class CruiseAssistDebugUI
 	{
 		public static bool Show = false;
-		public static Rect Rect = new Rect(0f, 0f, 600f, 200f);
+		public static Rect Rect = new Rect(0f, 0f, 600f, 600f);
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
 		private static long nextCheckGameTick = long.MaxValue;
+
+		private static Vector2 scrollPos = Vector2.zero;
 
 		public static void OnGUI()
 		{
@@ -61,6 +63,8 @@ namespace Tanukinomori
 
 			GUI.skin.label.fontSize = 16;
 
+			scrollPos = GUILayout.BeginScrollView(scrollPos);
+
 			GUILayout.Label($"CruiseAssist.ReticuleTargetStar.id={CruiseAssist.ReticuleTargetStar?.id}");
 			GUILayout.Label($"CruiseAssist.ReticuleTargetPlanet.id={CruiseAssist.ReticuleTargetPlanet?.id}");
 			GUILayout.Label($"CruiseAssist.SelectTargetStar.id={CruiseAssist.SelectTargetStar?.id}");
@@ -78,6 +82,12 @@ namespace Tanukinomori
 			GUILayout.Label($"CruiseAssist.Enable={CruiseAssist.Enable}");
 			GUILayout.Label($"CruiseAssist.History={CruiseAssist.History.Count()}");
 			GUILayout.Label($"CruiseAssist.History={ListUtils.ToString(CruiseAssist.History)}");
+			GUILayout.Label($"GUI.skin.window.margin.top={GUI.skin.window.margin.top}");
+			GUILayout.Label($"GUI.skin.window.border.top={GUI.skin.window.border.top}");
+			GUILayout.Label($"GUI.skin.window.padding.top={GUI.skin.window.padding.top}");
+			GUILayout.Label($"GUI.skin.window.overflow.top={GUI.skin.window.overflow.top}");
+
+			GUILayout.EndScrollView();
 
 			GUILayout.EndVertical();
 

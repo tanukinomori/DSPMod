@@ -6,14 +6,15 @@ namespace Tanukinomori
 {
 	public class CruiseAssistStarListUI
 	{
+		private static int wIdx = 0;
+
 		public static float WindowWidth = 560f;
 		public static float WindowHeight = 600f;
-#if false
-		public static float WindowWidth = 420f;
-		public static float WindowHeight = 450f;
-#endif
-		public static bool Show = false;
-		public static Rect Rect = new Rect(0f, 0f, WindowWidth, WindowHeight);
+
+		public static bool[] Show = { false, false };
+		public static Rect[] Rect = {
+			new Rect(0f, 0f, WindowWidth, WindowHeight),
+			new Rect(0f, 0f, WindowWidth, WindowHeight) };
 		public static int ListSelected;
 
 		private static float lastCheckWindowLeft = float.MinValue;
@@ -24,38 +25,40 @@ namespace Tanukinomori
 
 		public static void OnGUI()
 		{
+			wIdx = CruiseAssistMainUI.wIdx;
+
 			GUI.skin.window.fontSize = 11;
 
-			Rect = GUILayout.Window(99030292, Rect, WindowFunction, "CruiseAssist - StarList");
+			Rect[wIdx] = GUILayout.Window(99030292, Rect[wIdx], WindowFunction, "CruiseAssist - StarList");
 
-			if (Rect.x < 0)
+			if (Rect[wIdx].x < 0)
 			{
-				Rect.x = 0;
+				Rect[wIdx].x = 0;
 			}
-			else if (Screen.width < Rect.xMax)
+			else if (Screen.width < Rect[wIdx].xMax)
 			{
-				Rect.x = Screen.width - Rect.width;
+				Rect[wIdx].x = Screen.width - Rect[wIdx].width;
 			}
 
-			if (Rect.y < 0)
+			if (Rect[wIdx].y < 0)
 			{
-				Rect.y = 0;
+				Rect[wIdx].y = 0;
 			}
-			else if (Screen.height < Rect.yMax)
+			else if (Screen.height < Rect[wIdx].yMax)
 			{
-				Rect.y = Screen.height - Rect.height;
+				Rect[wIdx].y = Screen.height - Rect[wIdx].height;
 			}
 
 			if (lastCheckWindowLeft != float.MinValue)
 			{
-				if (Rect.x != lastCheckWindowLeft || Rect.y != lastCheckWindowTop)
+				if (Rect[wIdx].x != lastCheckWindowLeft || Rect[wIdx].y != lastCheckWindowTop)
 				{
 					nextCheckGameTick = GameMain.gameTick + 300;
 				}
 			}
 
-			lastCheckWindowLeft = Rect.x;
-			lastCheckWindowTop = Rect.y;
+			lastCheckWindowLeft = Rect[wIdx].x;
+			lastCheckWindowTop = Rect[wIdx].y;
 
 			if (nextCheckGameTick <= GameMain.gameTick)
 			{
@@ -72,7 +75,7 @@ namespace Tanukinomori
 
 			GUI.skin.button.alignment = TextAnchor.MiddleCenter;
 			GUI.skin.button.fixedWidth = 120f;
-			GUI.skin.button.fontSize = CruiseAssistMainUI.FontSize18;
+			GUI.skin.button.fontSize = 18;
 
 			var style = new GUIStyle(GUI.skin.button);
 
@@ -89,8 +92,8 @@ namespace Tanukinomori
 			scrollPos = GUILayout.BeginScrollView(scrollPos);
 
 			GUI.skin.label.alignment = TextAnchor.MiddleLeft;
-			GUI.skin.label.fontSize = CruiseAssistMainUI.FontSize20;
-			GUI.skin.button.fontSize = CruiseAssistMainUI.FontSize16;
+			GUI.skin.label.fontSize = 20;
+			GUI.skin.button.fontSize = 16;
 			GUI.skin.button.fixedWidth = 0f;
 
 			if (ListSelected == 0)
@@ -195,7 +198,7 @@ namespace Tanukinomori
 
 			if (GUILayout.Button("Close", GUILayout.ExpandWidth(false)))
 			{
-				Show = false;
+				Show[wIdx] = false;
 			}
 
 			GUILayout.EndHorizontal();

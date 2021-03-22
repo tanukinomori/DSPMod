@@ -5,8 +5,8 @@ namespace Tanukinomori
 	[HarmonyPatch(typeof(GameMain))]
 	public class Patch_GameMain
 	{
-		[HarmonyPatch("Begin"), HarmonyPrefix]
-		public static void Begin_Prefix()
+		[HarmonyPatch("Begin"), HarmonyPostfix]
+		public static void Begin_Postfix()
 		{
 			ConfigManager.CheckConfig(ConfigManager.Step.GAME_MAIN_BEGIN);
 		}
@@ -14,7 +14,6 @@ namespace Tanukinomori
 		[HarmonyPatch("Pause"), HarmonyPrefix]
 		public static void Pause_Prefix()
 		{
-			CruiseAssistMainUI.Show = false;
 			ConfigManager.CheckConfig(ConfigManager.Step.STATE);
 		}
 	}

@@ -70,6 +70,8 @@
     <Compile Include="CruiseAssistConfigManager.cs" />
     <Compile Include="CruiseAssist.cs" />
     <Compile Include="commons\ConfigManager.cs" />
+    <Compile Include="Patch\Patch_UIStarmap.cs" />
+    <Compile Include="Patch\Patch_UITechTree.cs" />
     <Compile Include="UI\CruiseAssistDebugUI.cs" />
     <Compile Include="enum\CruiseAssistMainUIViewMode.cs" />
     <Compile Include="UI\CruiseAssistStarListUI.cs" />
@@ -80,7 +82,6 @@
     <Compile Include="Patch\Patch_PlayerMoveSail.cs" />
     <Compile Include="Patch\Patch_GameMain.cs" />
     <Compile Include="Patch\Patch_UISailPanel.cs" />
-    <Compile Include="Patch\Patch_UITechTree.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="commons\Tuple.cs" />
   </ItemGroup>
@@ -93,7 +94,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /y $(TargetPath) C:\Users\tanu\AppData\Roaming\r2modmanPlus-local\DysonSphereProgram\profiles\Default\BepInEx\plugins
+    <PostBuildEvent>set BEPINEX_PATH=C:\Users\tanu\AppData\Roaming\r2modmanPlus-local\DysonSphereProgram\profiles\Default\BepInEx
+del %25BEPINEX_PATH%25\plugins\$(TargetFileName)
+del %25BEPINEX_PATH%25\scripts\$(TargetFileName)
+copy /y $(TargetPath) %25BEPINEX_PATH%25\scripts
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
