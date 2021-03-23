@@ -12,7 +12,7 @@ namespace Tanukinomori
 	{
 		public const string ModGuid = "tanu.CruiseAssist";
 		public const string ModName = "CruiseAssist";
-		public const string ModVersion = "0.0.13";
+		public const string ModVersion = "0.0.14";
 
 		public static bool Enable = true;
 		public static StarData ReticuleTargetStar = null;
@@ -48,7 +48,7 @@ namespace Tanukinomori
 				return;
 			}
 			var uiGame = UIRoot.instance.uiGame;
-			if (uiGame.techTree.active || uiGame.escMenu.active || uiGame.hideAllUI0 || uiGame.hideAllUI1)
+			if (!uiGame.guideComplete || uiGame.techTree.active || uiGame.escMenu.active || uiGame.dysonmap.active || uiGame.hideAllUI0 || uiGame.hideAllUI1)
 			{
 				return;
 			}
