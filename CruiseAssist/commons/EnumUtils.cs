@@ -4,7 +4,7 @@ namespace Tanukinomori
 {
 	public class EnumUtils
 	{
-		public static bool TryParse<TEnum>(string value, out TEnum result)
+		public static bool TryParse<TEnum>(string value, out TEnum result) where TEnum : struct
 		{
 			if (value == null || !Enum.IsDefined(typeof(TEnum), value))
 			{

@@ -1,5 +1,6 @@
 ﻿using BepInEx.Configuration;
 using HarmonyLib;
+using System;
 using System.Collections.Generic;
 
 // https://github.com/BepInEx/BepInEx/blob/master/BepInEx.Core/Configuration/ConfigFile.cs
@@ -10,9 +11,11 @@ namespace Tanukinomori
 	{
 		public enum Step { AWAKE, GAME_MAIN_BEGIN, STATE }
 
-		private static ConfigManager _instance;
+		private static ConfigManager _instance = null;
 
-		public static ConfigFile Config { private set; get; }
+		private static Dictionary<ConfigDefinition, string> orphanedEntries = null;
+
+		public static ConfigFile Config { private set; get; } = null;
 
 		protected ConfigManager(ConfigFile config)
 		{
@@ -47,14 +50,32 @@ namespace Tanukinomori
 		public static T GetValue<T>(string section, string key) =>
 			GetEntry<T>(section, key).Value;
 
-		public static bool Remove(ConfigDefinition key) =>
+		public static bool UpdateEntry<T>(string section, string key, T value) where T : IComparable
+		{
+			var entry = GetEntry<T>(section, key);
+			if (entry.Value.CompareTo(value) == 0)
+			{
+				return false;
+			}
+			entry.Value = value;
+			return true;
+		}
+
+		public static bool RemoveEntry(ConfigDefinition key) =>
 			Config.Remove(key);
 
-		public static Dictionary<ConfigDefinition, string> GetOrphanedEntries() =>
-			(Dictionary<ConfigDefinition, string>)AccessTools.Property(typeof(ConfigFile), "OrphanedEntries").GetValue(Config, null);
-
-		public static void Migration<T>(string newSection, string newKey, T defaultValue, string oldSection, string oldKey, Dictionary<ConfigDefinition, string> orphanedEntries)
+		public static Dictionary<ConfigDefinition, string> GetOrphanedEntries()
 		{
+			if (orphanedEntries == null)
+			{
+				orphanedEntries = (Dictionary<ConfigDefinition, string>)AccessTools.Property(typeof(ConfigFile), "OrphanedEntries").GetValue(Config, null);
+			}
+			return orphanedEntries;
+		}
+
+		public static void Migration<T>(string newSection, string newKey, T defaultValue, string oldSection, string oldKey)
+		{
+			GetOrphanedEntries();
 			var oldDef = new ConfigDefinition(oldSection, oldKey);
 			if (orphanedEntries.TryGetValue(oldDef, out var s))
 			{

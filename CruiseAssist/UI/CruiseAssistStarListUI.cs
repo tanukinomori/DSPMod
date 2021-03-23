@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -8,8 +9,8 @@ namespace Tanukinomori
 	{
 		private static int wIdx = 0;
 
-		public static float WindowWidth = 560f;
-		public static float WindowHeight = 600f;
+		public static float WindowWidth = 400f;
+		public static float WindowHeight = 480f;
 
 		public static bool[] Show = { false, false };
 		public static Rect[] Rect = {
@@ -27,26 +28,29 @@ namespace Tanukinomori
 		{
 			wIdx = CruiseAssistMainUI.wIdx;
 
-			GUI.skin.window.fontSize = 11;
+			var windowStyle = new GUIStyle(GUI.skin.window);
+			windowStyle.fontSize = 11;
 
-			Rect[wIdx] = GUILayout.Window(99030292, Rect[wIdx], WindowFunction, "CruiseAssist - StarList");
+			Rect[wIdx] = GUILayout.Window(99030292, Rect[wIdx], WindowFunction, "CruiseAssist - StarList", windowStyle);
 
+			var scale = CruiseAssistMainUI.Scale / 100.0f;
+
+			if (Screen.width / scale < Rect[wIdx].xMax)
+			{
+				Rect[wIdx].x = Screen.width / scale - Rect[wIdx].width;
+			}
 			if (Rect[wIdx].x < 0)
 			{
 				Rect[wIdx].x = 0;
 			}
-			else if (Screen.width < Rect[wIdx].xMax)
-			{
-				Rect[wIdx].x = Screen.width - Rect[wIdx].width;
-			}
 
+			if (Screen.height / scale < Rect[wIdx].yMax)
+			{
+				Rect[wIdx].y = Screen.height / scale - Rect[wIdx].height;
+			}
 			if (Rect[wIdx].y < 0)
 			{
 				Rect[wIdx].y = 0;
-			}
-			else if (Screen.height < Rect[wIdx].yMax)
-			{
-				Rect[wIdx].y = Screen.height - Rect[wIdx].height;
 			}
 
 			if (lastCheckWindowLeft != float.MinValue)
@@ -73,28 +77,40 @@ namespace Tanukinomori
 
 			GUILayout.BeginHorizontal();
 
-			GUI.skin.button.alignment = TextAnchor.MiddleCenter;
-			GUI.skin.button.fixedWidth = 120f;
-			GUI.skin.button.fontSize = 18;
-
-			var style = new GUIStyle(GUI.skin.button);
+			var mainWindowStyleButtonStyle = new GUIStyle(GUI.skin.button);
+			mainWindowStyleButtonStyle.fixedWidth = 80;
+			mainWindowStyleButtonStyle.fixedHeight = 20;
+			mainWindowStyleButtonStyle.fontSize = 12;
 
 			string[] texts = { "Normal", "History" };
-			var selected = GUILayout.Toolbar(ListSelected, texts);
+			var selected = GUILayout.Toolbar(ListSelected, texts, mainWindowStyleButtonStyle);
 			if (selected != ListSelected)
 			{
 				ListSelected = selected;
-				ConfigManager.CheckConfig(ConfigManager.Step.STATE);
+				nextCheckGameTick = GameMain.gameTick + 300;
 			}
 
 			GUILayout.EndHorizontal();
 
 			scrollPos = GUILayout.BeginScrollView(scrollPos);
 
-			GUI.skin.label.alignment = TextAnchor.MiddleLeft;
-			GUI.skin.label.fontSize = 20;
-			GUI.skin.button.fontSize = 16;
-			GUI.skin.button.fixedWidth = 0f;
+			var nameLabelStyle = new GUIStyle(GUI.skin.label);
+			nameLabelStyle.fixedWidth = 240;
+			nameLabelStyle.fixedHeight = 20;
+			nameLabelStyle.fontSize = 14;
+			nameLabelStyle.alignment = TextAnchor.MiddleLeft;
+
+			var rangeLabelStyle = new GUIStyle(GUI.skin.label);
+			rangeLabelStyle.fixedWidth = 60;
+			rangeLabelStyle.fixedHeight = 20;
+			rangeLabelStyle.fontSize = 14;
+			rangeLabelStyle.alignment = TextAnchor.MiddleRight;
+
+			var setButtonStyle = new GUIStyle(GUI.skin.button);
+			setButtonStyle.fixedWidth = 40;
+			setButtonStyle.fixedHeight = 18;
+			setButtonStyle.margin.top = 6;
+			setButtonStyle.fontSize = 12;
 
 			if (ListSelected == 0)
 			{
@@ -112,27 +128,29 @@ namespace Tanukinomori
 							{
 								var planet = tuple2.v1;
 								GUILayout.BeginHorizontal();
-								GUI.color = Color.white;
+								nameLabelStyle.normal.textColor = Color.white;
+								rangeLabelStyle.normal.textColor = Color.white;
 								if (planet == null)
 								{
 									if (CruiseAssist.SelectTargetPlanet == null && CruiseAssist.SelectTargetStar != null && star.id == CruiseAssist.SelectTargetStar.id)
 									{
-										GUI.color = Color.cyan;
+										nameLabelStyle.normal.textColor = Color.cyan;
+										rangeLabelStyle.normal.textColor = Color.cyan;
 									}
-									GUILayout.Label(starName);
+									GUILayout.Label(starName, nameLabelStyle);
 								}
 								else
 								{
 									if (CruiseAssist.SelectTargetPlanet != null && planet.id == CruiseAssist.SelectTargetPlanet.id)
 									{
-										GUI.color = Color.cyan;
+										nameLabelStyle.normal.textColor = Color.cyan;
+										rangeLabelStyle.normal.textColor = Color.cyan;
 									}
-									GUILayout.Label(starName + " - " + CruiseAssist.GetPlanetName(planet));
+									GUILayout.Label(starName + " - " + CruiseAssist.GetPlanetName(planet), nameLabelStyle);
 								}
 								GUILayout.FlexibleSpace();
-								GUILayout.Label(CruiseAssistMainUI.RangeToString(tuple2.v2));
-								GUI.color = Color.white;
-								if (GUILayout.Button("SET"))
+								GUILayout.Label(CruiseAssistMainUI.RangeToString(tuple2.v2), rangeLabelStyle);
+								if (GUILayout.Button("SET", setButtonStyle))
 								{
 									SelectStar(star, planet);
 								}
@@ -142,20 +160,20 @@ namespace Tanukinomori
 					else
 					{
 						GUILayout.BeginHorizontal();
-						GUI.color = Color.white;
+						nameLabelStyle.normal.textColor = Color.white;
+						rangeLabelStyle.normal.textColor = Color.white;
 						if (CruiseAssist.SelectTargetStar != null && star.id == CruiseAssist.SelectTargetStar.id)
 						{
-							GUI.color = Color.cyan;
+							nameLabelStyle.normal.textColor = Color.cyan;
+							rangeLabelStyle.normal.textColor = Color.cyan;
 						}
-						GUILayout.Label(starName);
+						GUILayout.Label(starName, nameLabelStyle);
 						GUILayout.FlexibleSpace();
-						GUILayout.Label(CruiseAssistMainUI.RangeToString(tuple.v2));
-						GUI.color = Color.white;
-						if (GUILayout.Button("SET"))
+						GUILayout.Label(CruiseAssistMainUI.RangeToString(tuple.v2), rangeLabelStyle);
+						if (GUILayout.Button("SET", setButtonStyle))
 						{
 							SelectStar(star, null);
 						}
-						GUI.color = Color.white;
 						GUILayout.EndHorizontal();
 					}
 				});
@@ -171,21 +189,21 @@ namespace Tanukinomori
 					var starName = CruiseAssist.GetStarName(star);
 					var range = (planet.uPosition - GameMain.mainPlayer.uPosition).magnitude;
 					GUILayout.BeginHorizontal();
-					GUI.color = Color.white;
+					nameLabelStyle.normal.textColor = Color.white;
+					rangeLabelStyle.normal.textColor = Color.white;
 					if (!highlighted && CruiseAssist.SelectTargetPlanet != null && planet.id == CruiseAssist.SelectTargetPlanet.id)
 					{
-						GUI.color = Color.cyan;
+						nameLabelStyle.normal.textColor = Color.cyan;
+						rangeLabelStyle.normal.textColor = Color.cyan;
 						highlighted = true;
 					}
-					GUILayout.Label(starName + " - " + CruiseAssist.GetPlanetName(planet));
+					GUILayout.Label(starName + " - " + CruiseAssist.GetPlanetName(planet), nameLabelStyle);
 					GUILayout.FlexibleSpace();
-					GUILayout.Label(CruiseAssistMainUI.RangeToString(range));
-					GUI.color = Color.white;
-					if (GUILayout.Button("SET"))
+					GUILayout.Label(CruiseAssistMainUI.RangeToString(range), rangeLabelStyle);
+					if (GUILayout.Button("SET", setButtonStyle))
 					{
 						SelectStar(star, planet);
 					}
-					GUI.color = Color.white;
 					GUILayout.EndHorizontal();
 				});
 			}
@@ -196,7 +214,12 @@ namespace Tanukinomori
 
 			GUILayout.FlexibleSpace();
 
-			if (GUILayout.Button("Close", GUILayout.ExpandWidth(false)))
+			var closeButtonStyle = new GUIStyle(GUI.skin.button);
+			closeButtonStyle.fixedWidth = 80;
+			closeButtonStyle.fixedHeight = 20;
+			closeButtonStyle.fontSize = 12;
+
+			if (GUILayout.Button("Close", closeButtonStyle))
 			{
 				Show[wIdx] = false;
 			}

@@ -72,6 +72,7 @@
     <Compile Include="commons\ConfigManager.cs" />
     <Compile Include="Patch\Patch_UIStarmap.cs" />
     <Compile Include="Patch\Patch_UITechTree.cs" />
+    <Compile Include="UI\CruiseAssistConfigUI.cs" />
     <Compile Include="UI\CruiseAssistDebugUI.cs" />
     <Compile Include="enum\CruiseAssistMainUIViewMode.cs" />
     <Compile Include="UI\CruiseAssistStarListUI.cs" />

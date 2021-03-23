@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Tanukinomori.Patch;
+using Tanukinomori.UI;
+using UnityEngine;
 
 namespace Tanukinomori
 {
@@ -12,7 +14,7 @@ namespace Tanukinomori
 	{
 		public const string ModGuid = "tanu.CruiseAssist";
 		public const string ModName = "CruiseAssist";
-		public const string ModVersion = "0.0.14";
+		public const string ModVersion = "0.0.15";
 
 		public static bool Enable = true;
 		public static StarData ReticuleTargetStar = null;
@@ -58,10 +60,18 @@ namespace Tanukinomori
 
 				CruiseAssistMainUI.wIdx = uiGame.starmap.active ? 1 : 0;
 
+				var scale = CruiseAssistMainUI.Scale / 100.0f;
+
+				GUIUtility.ScaleAroundPivot(new Vector2(scale, scale), Vector2.zero);
+
 				CruiseAssistMainUI.OnGUI();
 				if (CruiseAssistStarListUI.Show[CruiseAssistMainUI.wIdx])
 				{
 					CruiseAssistStarListUI.OnGUI();
+				}
+				if (CruiseAssistConfigUI.Show[CruiseAssistMainUI.wIdx])
+				{
+					CruiseAssistConfigUI.OnGUI();
 				}
 				if (CruiseAssistDebugUI.Show)
 				{
