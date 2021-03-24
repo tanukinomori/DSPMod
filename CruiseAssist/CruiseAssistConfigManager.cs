@@ -35,7 +35,7 @@ namespace Tanukinomori
 
 				CruiseAssist.Enable = Bind("Setting", "Enable", true).Value;
 
-				CruiseAssistMainUI.Scale = (float)Bind("Setting", "UIScale", 200).Value;
+				CruiseAssistMainUI.Scale = (float)Bind("Setting", "UIScale", 150).Value;
 
 				var viewModeStr = Bind("Setting", "MainWindowViewMode", CruiseAssistMainUIViewMode.FULL.ToString()).Value;
 				EnumUtils.TryParse<CruiseAssistMainUIViewMode>(viewModeStr, out CruiseAssistMainUI.ViewMode);
@@ -62,28 +62,28 @@ namespace Tanukinomori
 			}
 			else if (step == Step.STATE)
 			{
-				saveFlag |= ConfigManager.UpdateEntry("Setting", "Enable", CruiseAssist.Enable);
+				saveFlag |= UpdateEntry("Setting", "Enable", CruiseAssist.Enable);
 
-				saveFlag |= ConfigManager.UpdateEntry("Setting", "UIScale", (int)CruiseAssistMainUI.Scale);
+				saveFlag |= UpdateEntry("Setting", "UIScale", (int)CruiseAssistMainUI.Scale);
 
-				saveFlag |= ConfigManager.UpdateEntry("Setting", "MainWindowViewMode", CruiseAssistMainUI.ViewMode.ToString());
+				saveFlag |= UpdateEntry("Setting", "MainWindowViewMode", CruiseAssistMainUI.ViewMode.ToString());
 
 				for (int i = 0; i < 2; ++i)
 				{
-					saveFlag |= ConfigManager.UpdateEntry("State", $"MainWindow{i}Left", (int)CruiseAssistMainUI.Rect[i].x);
-					saveFlag |= ConfigManager.UpdateEntry("State", $"MainWindow{i}Top", (int)CruiseAssistMainUI.Rect[i].y);
-					saveFlag |= ConfigManager.UpdateEntry("State", $"StarListWindow{i}Left", (int)CruiseAssistStarListUI.Rect[i].x);
-					saveFlag |= ConfigManager.UpdateEntry("State", $"StarListWindow{i}Top", (int)CruiseAssistStarListUI.Rect[i].y);
-					saveFlag |= ConfigManager.UpdateEntry("State", $"ConfigWindow{i}Left", (int)CruiseAssistConfigUI.Rect[i].x);
-					saveFlag |= ConfigManager.UpdateEntry("State", $"ConfigWindow{i}Top", (int)CruiseAssistConfigUI.Rect[i].y);
+					saveFlag |= UpdateEntry("State", $"MainWindow{i}Left", (int)CruiseAssistMainUI.Rect[i].x);
+					saveFlag |= UpdateEntry("State", $"MainWindow{i}Top", (int)CruiseAssistMainUI.Rect[i].y);
+					saveFlag |= UpdateEntry("State", $"StarListWindow{i}Left", (int)CruiseAssistStarListUI.Rect[i].x);
+					saveFlag |= UpdateEntry("State", $"StarListWindow{i}Top", (int)CruiseAssistStarListUI.Rect[i].y);
+					saveFlag |= UpdateEntry("State", $"ConfigWindow{i}Left", (int)CruiseAssistConfigUI.Rect[i].x);
+					saveFlag |= UpdateEntry("State", $"ConfigWindow{i}Top", (int)CruiseAssistConfigUI.Rect[i].y);
 				}
 
-				saveFlag |= ConfigManager.UpdateEntry("State", "StarListWindowListSelected", CruiseAssistStarListUI.ListSelected);
+				saveFlag |= UpdateEntry("State", "StarListWindowListSelected", CruiseAssistStarListUI.ListSelected);
 
-				saveFlag |= ConfigManager.UpdateEntry("State", "DebugWindowLeft", (int)CruiseAssistDebugUI.Rect.x);
-				saveFlag |= ConfigManager.UpdateEntry("State", "DebugWindowTop", (int)CruiseAssistDebugUI.Rect.y);
+				saveFlag |= UpdateEntry("State", "DebugWindowLeft", (int)CruiseAssistDebugUI.Rect.x);
+				saveFlag |= UpdateEntry("State", "DebugWindowTop", (int)CruiseAssistDebugUI.Rect.y);
 
-				saveFlag |= ConfigManager.UpdateEntry("Save", $"History_{GameMain.galaxy.seed}", ListUtils.ToString(CruiseAssist.History));
+				saveFlag |= UpdateEntry("Save", $"History_{GameMain.galaxy.seed}", ListUtils.ToString(CruiseAssist.History));
 			}
 			if (saveFlag)
 			{

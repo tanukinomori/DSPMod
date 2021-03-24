@@ -79,9 +79,9 @@ namespace Tanukinomori
 			var oldDef = new ConfigDefinition(oldSection, oldKey);
 			if (orphanedEntries.TryGetValue(oldDef, out var s))
 			{
-				LogManager.LogInfo($"migration {oldSection}.{oldKey}({s}) => {newSection}.{newKey}");
 				Bind(newSection, newKey, defaultValue).SetSerializedValue(s);
 				orphanedEntries.Remove(oldDef);
+				LogManager.LogInfo($"migration {oldSection}.{oldKey}({s}) => {newSection}.{newKey}");
 			}
 		}
 

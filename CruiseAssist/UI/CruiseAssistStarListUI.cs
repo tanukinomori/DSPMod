@@ -96,84 +96,114 @@ namespace Tanukinomori
 
 			var nameLabelStyle = new GUIStyle(GUI.skin.label);
 			nameLabelStyle.fixedWidth = 240;
-			nameLabelStyle.fixedHeight = 20;
+			nameLabelStyle.stretchHeight = true;
 			nameLabelStyle.fontSize = 14;
 			nameLabelStyle.alignment = TextAnchor.MiddleLeft;
 
-			var rangeLabelStyle = new GUIStyle(GUI.skin.label);
-			rangeLabelStyle.fixedWidth = 60;
-			rangeLabelStyle.fixedHeight = 20;
-			rangeLabelStyle.fontSize = 14;
-			rangeLabelStyle.alignment = TextAnchor.MiddleRight;
+			var nRangeLabelStyle = new GUIStyle(GUI.skin.label);
+			nRangeLabelStyle.fixedWidth = 60;
+			nRangeLabelStyle.fixedHeight = 20;
+			nRangeLabelStyle.fontSize = 14;
+			nRangeLabelStyle.alignment = TextAnchor.MiddleRight;
+			var hRangeLabelStyle = new GUIStyle(nRangeLabelStyle);
+			hRangeLabelStyle.fixedHeight = 40;
 
-			var setButtonStyle = new GUIStyle(GUI.skin.button);
-			setButtonStyle.fixedWidth = 40;
-			setButtonStyle.fixedHeight = 18;
-			setButtonStyle.margin.top = 6;
-			setButtonStyle.fontSize = 12;
+			var nSetTargetButtonStyle = new GUIStyle(GUI.skin.button);
+			nSetTargetButtonStyle.fixedWidth = 40;
+			nSetTargetButtonStyle.fixedHeight = 18;
+			nSetTargetButtonStyle.margin.top = 6;
+			nSetTargetButtonStyle.fontSize = 12;
+			var hSetTargetButtonStyle = new GUIStyle(nSetTargetButtonStyle);
+			hSetTargetButtonStyle.margin.top = 6;
 
 			if (ListSelected == 0)
 			{
 				GameMain.galaxy.stars.Select(star => new Tuple<StarData, double>(star, (star.uPosition - GameMain.mainPlayer.uPosition).magnitude)).OrderBy(tuple => tuple.v2).Do(tuple =>
 				{
 					var star = tuple.v1;
+					var range = tuple.v2;
 					var starName = CruiseAssist.GetStarName(star);
+					StarData star2 = null;
 					if (GameMain.localStar != null && star.id == GameMain.localStar.id)
 					{
-						GameMain.localStar.planets.
+						star2 = GameMain.localStar;
+					}
+					else if (CruiseAssist.SelectTargetStar != null && star.id == CruiseAssist.SelectTargetStar.id && GameMain.history.universeObserveLevel >= (range >= 14400000.0 ? 4 : 3))
+					{
+						star2 = star;
+					}
+					if (star2 != null)
+					{
+						star2.planets.
 							Select(planet => new Tuple<PlanetData, double>(planet, (planet.uPosition - GameMain.mainPlayer.uPosition).magnitude)).
 							AddItem(new Tuple<PlanetData, double>(null, (star.uPosition - GameMain.mainPlayer.uPosition).magnitude)).
 							OrderBy(tuple2 => tuple2.v2).
 							Do(tuple2 =>
 							{
-								var planet = tuple2.v1;
 								GUILayout.BeginHorizontal();
+
+								var planet = tuple2.v1;
 								nameLabelStyle.normal.textColor = Color.white;
-								rangeLabelStyle.normal.textColor = Color.white;
+								nRangeLabelStyle.normal.textColor = Color.white;
+								float textHeight;
+
 								if (planet == null)
 								{
 									if (CruiseAssist.SelectTargetPlanet == null && CruiseAssist.SelectTargetStar != null && star.id == CruiseAssist.SelectTargetStar.id)
 									{
 										nameLabelStyle.normal.textColor = Color.cyan;
-										rangeLabelStyle.normal.textColor = Color.cyan;
+										nRangeLabelStyle.normal.textColor = Color.cyan;
 									}
 									GUILayout.Label(starName, nameLabelStyle);
+									textHeight = GUILayoutUtility.GetLastRect().height;
 								}
 								else
 								{
 									if (CruiseAssist.SelectTargetPlanet != null && planet.id == CruiseAssist.SelectTargetPlanet.id)
 									{
 										nameLabelStyle.normal.textColor = Color.cyan;
-										rangeLabelStyle.normal.textColor = Color.cyan;
+										nRangeLabelStyle.normal.textColor = Color.cyan;
 									}
 									GUILayout.Label(starName + " - " + CruiseAssist.GetPlanetName(planet), nameLabelStyle);
+									textHeight = GUILayoutUtility.GetLastRect().height;
 								}
+
 								GUILayout.FlexibleSpace();
-								GUILayout.Label(CruiseAssistMainUI.RangeToString(tuple2.v2), rangeLabelStyle);
-								if (GUILayout.Button("SET", setButtonStyle))
+
+								GUILayout.Label(CruiseAssistMainUI.RangeToString(range), textHeight < 30 ? nRangeLabelStyle : hRangeLabelStyle);
+
+								if (GUILayout.Button("SET", textHeight < 30 ? nSetTargetButtonStyle : hSetTargetButtonStyle))
 								{
 									SelectStar(star, planet);
 								}
+
 								GUILayout.EndHorizontal();
 							});
 					}
 					else
 					{
 						GUILayout.BeginHorizontal();
+
 						nameLabelStyle.normal.textColor = Color.white;
-						rangeLabelStyle.normal.textColor = Color.white;
+						nRangeLabelStyle.normal.textColor = Color.white;
+
 						if (CruiseAssist.SelectTargetStar != null && star.id == CruiseAssist.SelectTargetStar.id)
 						{
 							nameLabelStyle.normal.textColor = Color.cyan;
-							rangeLabelStyle.normal.textColor = Color.cyan;
+							nRangeLabelStyle.normal.textColor = Color.cyan;
 						}
+
 						GUILayout.Label(starName, nameLabelStyle);
+
 						GUILayout.FlexibleSpace();
-						GUILayout.Label(CruiseAssistMainUI.RangeToString(tuple.v2), rangeLabelStyle);
-						if (GUILayout.Button("SET", setButtonStyle))
+
+						GUILayout.Label(CruiseAssistMainUI.RangeToString(range), nRangeLabelStyle);
+
+						if (GUILayout.Button("SET", nSetTargetButtonStyle))
 						{
 							SelectStar(star, null);
 						}
+
 						GUILayout.EndHorizontal();
 					}
 				});
@@ -184,31 +214,42 @@ namespace Tanukinomori
 
 				CruiseAssist.History.Reverse<int>().Do(id =>
 				{
+					GUILayout.BeginHorizontal();
+
 					var planet = GameMain.galaxy.PlanetById(id);
 					var star = planet.star;
 					var starName = CruiseAssist.GetStarName(star);
 					var range = (planet.uPosition - GameMain.mainPlayer.uPosition).magnitude;
-					GUILayout.BeginHorizontal();
 					nameLabelStyle.normal.textColor = Color.white;
-					rangeLabelStyle.normal.textColor = Color.white;
+					nRangeLabelStyle.normal.textColor = Color.white;
+					float textHeight;
+
 					if (!highlighted && CruiseAssist.SelectTargetPlanet != null && planet.id == CruiseAssist.SelectTargetPlanet.id)
 					{
 						nameLabelStyle.normal.textColor = Color.cyan;
-						rangeLabelStyle.normal.textColor = Color.cyan;
+						nRangeLabelStyle.normal.textColor = Color.cyan;
 						highlighted = true;
 					}
+
 					GUILayout.Label(starName + " - " + CruiseAssist.GetPlanetName(planet), nameLabelStyle);
+					textHeight = GUILayoutUtility.GetLastRect().height;
+
 					GUILayout.FlexibleSpace();
-					GUILayout.Label(CruiseAssistMainUI.RangeToString(range), rangeLabelStyle);
-					if (GUILayout.Button("SET", setButtonStyle))
+
+					GUILayout.Label(CruiseAssistMainUI.RangeToString(range), textHeight < 30 ? nRangeLabelStyle : hRangeLabelStyle);
+
+					if (GUILayout.Button("SET", textHeight < 30 ? nSetTargetButtonStyle : hSetTargetButtonStyle))
 					{
 						SelectStar(star, planet);
 					}
+
 					GUILayout.EndHorizontal();
 				});
 			}
 
 			GUILayout.EndScrollView();
+
+			GUILayout.FlexibleSpace();
 
 			GUILayout.BeginHorizontal();
 
