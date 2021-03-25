@@ -58,6 +58,7 @@ namespace Tanukinomori
 				if (GameMain.galaxy != null)
 				{
 					CruiseAssist.History = ListUtils.Parse(Bind("Save", $"History_{GameMain.galaxy.seed}", "").Value);
+					CruiseAssist.Bookmark = ListUtils.Parse(Bind("Save", $"Bookmark_{GameMain.galaxy.seed}", "").Value);
 				}
 			}
 			else if (step == Step.STATE)
@@ -84,6 +85,7 @@ namespace Tanukinomori
 				saveFlag |= UpdateEntry("State", "DebugWindowTop", (int)CruiseAssistDebugUI.Rect.y);
 
 				saveFlag |= UpdateEntry("Save", $"History_{GameMain.galaxy.seed}", ListUtils.ToString(CruiseAssist.History));
+				saveFlag |= UpdateEntry("Save", $"Bookmark_{GameMain.galaxy.seed}", ListUtils.ToString(CruiseAssist.Bookmark));
 			}
 			if (saveFlag)
 			{

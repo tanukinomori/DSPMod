@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -16,7 +16,8 @@ namespace Tanukinomori
 		public static Rect[] Rect = {
 			new Rect(0f, 0f, WindowWidth, WindowHeight),
 			new Rect(0f, 0f, WindowWidth, WindowHeight) };
-		public static int ListSelected;
+		public static int ListSelected = 0;
+		public static int[] actionSelected = { 0, 0, 0 };
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
@@ -82,7 +83,7 @@ namespace Tanukinomori
 			mainWindowStyleButtonStyle.fixedHeight = 20;
 			mainWindowStyleButtonStyle.fontSize = 12;
 
-			string[] texts = { "Normal", "History" };
+			string[] texts = { "Normal", "History", "Bookmark" };
 			var selected = GUILayout.Toolbar(ListSelected, texts, mainWindowStyleButtonStyle);
 			if (selected != ListSelected)
 			{
@@ -93,6 +94,18 @@ namespace Tanukinomori
 			GUILayout.EndHorizontal();
 
 			scrollPos = GUILayout.BeginScrollView(scrollPos);
+
+			string[,] listButtonActionName =
+			{
+				// Normal
+				{ "SET","ADD" },
+				// History
+				{ "SET","ADD" },
+				// Bookmark
+				{ "SET","DEL" },
+			};
+
+			var actionName = listButtonActionName[ListSelected, actionSelected[ListSelected]];
 
 			var nameLabelStyle = new GUIStyle(GUI.skin.label);
 			nameLabelStyle.fixedWidth = 240;
@@ -114,7 +127,7 @@ namespace Tanukinomori
 			nSetTargetButtonStyle.margin.top = 6;
 			nSetTargetButtonStyle.fontSize = 12;
 			var hSetTargetButtonStyle = new GUIStyle(nSetTargetButtonStyle);
-			hSetTargetButtonStyle.margin.top = 6;
+			hSetTargetButtonStyle.margin.top = 16;
 
 			if (ListSelected == 0)
 			{
@@ -143,6 +156,7 @@ namespace Tanukinomori
 								GUILayout.BeginHorizontal();
 
 								var planet = tuple2.v1;
+								var range2 = tuple2.v2;
 								nameLabelStyle.normal.textColor = Color.white;
 								nRangeLabelStyle.normal.textColor = Color.white;
 								float textHeight;
@@ -154,8 +168,9 @@ namespace Tanukinomori
 										nameLabelStyle.normal.textColor = Color.cyan;
 										nRangeLabelStyle.normal.textColor = Color.cyan;
 									}
-									GUILayout.Label(starName, nameLabelStyle);
-									textHeight = GUILayoutUtility.GetLastRect().height;
+									var text = starName;
+									GUILayout.Label(text, nameLabelStyle);
+									textHeight = nameLabelStyle.CalcHeight(new GUIContent(text), nameLabelStyle.fixedWidth);
 								}
 								else
 								{
@@ -164,17 +179,29 @@ namespace Tanukinomori
 										nameLabelStyle.normal.textColor = Color.cyan;
 										nRangeLabelStyle.normal.textColor = Color.cyan;
 									}
-									GUILayout.Label(starName + " - " + CruiseAssist.GetPlanetName(planet), nameLabelStyle);
-									textHeight = GUILayoutUtility.GetLastRect().height;
+									var text = starName + " - " + CruiseAssist.GetPlanetName(planet);
+									GUILayout.Label(text, nameLabelStyle);
+									textHeight = nameLabelStyle.CalcHeight(new GUIContent(text), nameLabelStyle.fixedWidth);
 								}
 
 								GUILayout.FlexibleSpace();
 
-								GUILayout.Label(CruiseAssistMainUI.RangeToString(range), textHeight < 30 ? nRangeLabelStyle : hRangeLabelStyle);
+								GUILayout.Label(CruiseAssistMainUI.RangeToString(planet == null ? range : range2), textHeight < 30 ? nRangeLabelStyle : hRangeLabelStyle);
 
-								if (GUILayout.Button("SET", textHeight < 30 ? nSetTargetButtonStyle : hSetTargetButtonStyle))
+								if (GUILayout.Button(actionSelected[ListSelected] == 1 && planet == null ? "-" : actionName, textHeight < 30 ? nSetTargetButtonStyle : hSetTargetButtonStyle))
 								{
-									SelectStar(star, planet);
+									if (actionSelected[ListSelected] == 0)
+									{
+										SelectStar(star, planet);
+									}
+									else if (planet != null && !CruiseAssist.Bookmark.Contains(planet.id))
+									{
+										if (CruiseAssist.Bookmark.Count <= 128)
+										{
+											CruiseAssist.Bookmark.Add(planet.id);
+											nextCheckGameTick = GameMain.gameTick + 300;
+										}
+									}
 								}
 
 								GUILayout.EndHorizontal();
@@ -183,6 +210,7 @@ namespace Tanukinomori
 					else
 					{
 						GUILayout.BeginHorizontal();
+						float textHeight;
 
 						nameLabelStyle.normal.textColor = Color.white;
 						nRangeLabelStyle.normal.textColor = Color.white;
@@ -193,26 +221,33 @@ namespace Tanukinomori
 							nRangeLabelStyle.normal.textColor = Color.cyan;
 						}
 
+						var text = starName;
 						GUILayout.Label(starName, nameLabelStyle);
+						textHeight = nameLabelStyle.CalcHeight(new GUIContent(text), nameLabelStyle.fixedWidth);
 
 						GUILayout.FlexibleSpace();
 
-						GUILayout.Label(CruiseAssistMainUI.RangeToString(range), nRangeLabelStyle);
+						GUILayout.Label(CruiseAssistMainUI.RangeToString(range), textHeight < 30 ? nRangeLabelStyle : hRangeLabelStyle);
 
-						if (GUILayout.Button("SET", nSetTargetButtonStyle))
+						if (GUILayout.Button(actionSelected[ListSelected] == 1 ? "-" : actionName, textHeight < 30 ? nSetTargetButtonStyle : hSetTargetButtonStyle))
 						{
-							SelectStar(star, null);
+							if (actionSelected[ListSelected] == 0)
+							{
+								SelectStar(star, null);
+							}
 						}
 
 						GUILayout.EndHorizontal();
 					}
 				});
 			}
-			else if (ListSelected == 1)
+			else if (ListSelected == 1 || ListSelected == 2)
 			{
 				bool highlighted = false;
 
-				CruiseAssist.History.Reverse<int>().Do(id =>
+				var list = ListSelected == 1 ? CruiseAssist.History : CruiseAssist.Bookmark;
+
+				list.Reverse<int>().Do(id =>
 				{
 					GUILayout.BeginHorizontal();
 
@@ -231,16 +266,39 @@ namespace Tanukinomori
 						highlighted = true;
 					}
 
-					GUILayout.Label(starName + " - " + CruiseAssist.GetPlanetName(planet), nameLabelStyle);
-					textHeight = GUILayoutUtility.GetLastRect().height;
+					var text = starName + " - " + CruiseAssist.GetPlanetName(planet);
+					GUILayout.Label(text, nameLabelStyle);
+					textHeight = nameLabelStyle.CalcHeight(new GUIContent(text), nameLabelStyle.fixedWidth);
 
 					GUILayout.FlexibleSpace();
 
 					GUILayout.Label(CruiseAssistMainUI.RangeToString(range), textHeight < 30 ? nRangeLabelStyle : hRangeLabelStyle);
 
-					if (GUILayout.Button("SET", textHeight < 30 ? nSetTargetButtonStyle : hSetTargetButtonStyle))
+					if (GUILayout.Button(actionName, textHeight < 30 ? nSetTargetButtonStyle : hSetTargetButtonStyle))
 					{
-						SelectStar(star, planet);
+						if (actionSelected[ListSelected] == 0)
+						{
+							SelectStar(star, planet);
+						}
+						else
+						{
+							if (ListSelected == 1)
+							{
+								if (!CruiseAssist.Bookmark.Contains(planet.id))
+								{
+									if (CruiseAssist.Bookmark.Count <= 128)
+									{
+										CruiseAssist.Bookmark.Add(planet.id);
+										nextCheckGameTick = GameMain.gameTick + 300;
+									}
+								}
+							}
+							else
+							{
+								CruiseAssist.Bookmark.Remove(planet.id);
+								nextCheckGameTick = GameMain.gameTick + 300;
+							}
+						}
 					}
 
 					GUILayout.EndHorizontal();
@@ -253,14 +311,30 @@ namespace Tanukinomori
 
 			GUILayout.BeginHorizontal();
 
+			var buttonStyle = new GUIStyle(GUI.skin.button);
+			buttonStyle.fixedWidth = 80;
+			buttonStyle.fixedHeight = 20;
+			buttonStyle.fontSize = 12;
+
+			string[,] listButtonModeName =
+			{
+				// Normal
+				{ "Target","Bookmark" },
+				// History
+				{ "Target","Bookmark" },
+				// Bookmark
+				{ "Target","Delete" },
+			};
+
+			if (GUILayout.Button(listButtonModeName[ListSelected, actionSelected[ListSelected]], buttonStyle))
+			{
+				++actionSelected[ListSelected];
+				actionSelected[ListSelected] %= 2;
+			}
+
 			GUILayout.FlexibleSpace();
 
-			var closeButtonStyle = new GUIStyle(GUI.skin.button);
-			closeButtonStyle.fixedWidth = 80;
-			closeButtonStyle.fixedHeight = 20;
-			closeButtonStyle.fontSize = 12;
-
-			if (GUILayout.Button("Close", closeButtonStyle))
+			if (GUILayout.Button("Close", buttonStyle))
 			{
 				Show[wIdx] = false;
 			}

@@ -14,7 +14,7 @@ namespace Tanukinomori
 	{
 		public const string ModGuid = "tanu.CruiseAssist";
 		public const string ModName = "CruiseAssist";
-		public const string ModVersion = "0.0.16";
+		public const string ModVersion = "0.0.17";
 
 		public static bool Enable = true;
 		public static StarData ReticuleTargetStar = null;
@@ -27,6 +27,7 @@ namespace Tanukinomori
 		public static CruiseAssistState State = CruiseAssistState.INACTIVE;
 
 		public static List<int> History = new List<int>();
+		public static List<int> Bookmark = new List<int>();
 
 		public static Func<StarData, string> GetStarName = star => star.displayName;
 		public static Func<PlanetData, string> GetPlanetName = planet => planet.displayName;

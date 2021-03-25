@@ -11,7 +11,7 @@ namespace Tanukinomori
 	{
 		public enum Step { AWAKE, GAME_MAIN_BEGIN, STATE }
 
-		private static ConfigManager _instance = null;
+		private static ConfigManager instance = null;
 
 		private static Dictionary<ConfigDefinition, string> orphanedEntries = null;
 
@@ -19,13 +19,13 @@ namespace Tanukinomori
 
 		protected ConfigManager(ConfigFile config)
 		{
-			_instance = this;
+			instance = this;
 			Config = config;
 			Config.SaveOnConfigSet = false;
 		}
 
 		public static void CheckConfig(Step step) =>
-			_instance.CheckConfigImplements(step);
+			instance.CheckConfigImplements(step);
 
 		protected abstract void CheckConfigImplements(Step step);
 
