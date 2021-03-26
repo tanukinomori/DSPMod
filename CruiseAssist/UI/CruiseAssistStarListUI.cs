@@ -1,5 +1,6 @@
 using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -95,17 +96,17 @@ namespace Tanukinomori
 
 			scrollPos = GUILayout.BeginScrollView(scrollPos);
 
-			string[,] listButtonActionName =
+			string[][] listButtonActionName =
 			{
 				// Normal
-				{ "SET","ADD" },
+				new string[] { "SET", "ADD" },
 				// History
-				{ "SET","ADD" },
+				new string[] { "SET", "ADD" },
 				// Bookmark
-				{ "SET","DEL" },
+				new string[] { "SET", null, "DEL" },
 			};
 
-			var actionName = listButtonActionName[ListSelected, actionSelected[ListSelected]];
+			var actionName = listButtonActionName[ListSelected][actionSelected[ListSelected]];
 
 			var nameLabelStyle = new GUIStyle(GUI.skin.label);
 			nameLabelStyle.fixedWidth = 240;
@@ -121,13 +122,21 @@ namespace Tanukinomori
 			var hRangeLabelStyle = new GUIStyle(nRangeLabelStyle);
 			hRangeLabelStyle.fixedHeight = 40;
 
-			var nSetTargetButtonStyle = new GUIStyle(GUI.skin.button);
-			nSetTargetButtonStyle.fixedWidth = 40;
-			nSetTargetButtonStyle.fixedHeight = 18;
-			nSetTargetButtonStyle.margin.top = 6;
-			nSetTargetButtonStyle.fontSize = 12;
-			var hSetTargetButtonStyle = new GUIStyle(nSetTargetButtonStyle);
-			hSetTargetButtonStyle.margin.top = 16;
+			var nActionButtonStyle = new GUIStyle(GUI.skin.button);
+			nActionButtonStyle.fixedWidth = 40;
+			nActionButtonStyle.fixedHeight = 18;
+			nActionButtonStyle.margin.top = 6;
+			nActionButtonStyle.fontSize = 12;
+			var hActionButtonStyle = new GUIStyle(nActionButtonStyle);
+			hActionButtonStyle.margin.top = 16;
+
+			var nSortButtonStyle = new GUIStyle(GUI.skin.button);
+			nSortButtonStyle.fixedWidth = 20;
+			nSortButtonStyle.fixedHeight = 18;
+			nSortButtonStyle.margin.top = 6;
+			nSortButtonStyle.fontSize = 12;
+			var hSortButtonStyle = new GUIStyle(nSortButtonStyle);
+			hSortButtonStyle.margin.top = 16;
 
 			if (ListSelected == 0)
 			{
@@ -188,7 +197,7 @@ namespace Tanukinomori
 
 								GUILayout.Label(CruiseAssistMainUI.RangeToString(planet == null ? range : range2), textHeight < 30 ? nRangeLabelStyle : hRangeLabelStyle);
 
-								if (GUILayout.Button(actionSelected[ListSelected] == 1 && planet == null ? "-" : actionName, textHeight < 30 ? nSetTargetButtonStyle : hSetTargetButtonStyle))
+								if (GUILayout.Button(actionSelected[ListSelected] == 1 && planet == null ? "-" : actionName, textHeight < 30 ? nActionButtonStyle : hActionButtonStyle))
 								{
 									if (actionSelected[ListSelected] == 0)
 									{
@@ -229,7 +238,7 @@ namespace Tanukinomori
 
 						GUILayout.Label(CruiseAssistMainUI.RangeToString(range), textHeight < 30 ? nRangeLabelStyle : hRangeLabelStyle);
 
-						if (GUILayout.Button(actionSelected[ListSelected] == 1 ? "-" : actionName, textHeight < 30 ? nSetTargetButtonStyle : hSetTargetButtonStyle))
+						if (GUILayout.Button(actionSelected[ListSelected] == 1 ? "-" : actionName, textHeight < 30 ? nActionButtonStyle : hActionButtonStyle))
 						{
 							if (actionSelected[ListSelected] == 0)
 							{
@@ -245,9 +254,9 @@ namespace Tanukinomori
 			{
 				bool highlighted = false;
 
-				var list = ListSelected == 1 ? CruiseAssist.History : CruiseAssist.Bookmark;
+				var list = ListSelected == 1 ? CruiseAssist.History.Reverse<int>() : CruiseAssist.Bookmark.ToList();
 
-				list.Reverse<int>().Do(id =>
+				list.Do(id =>
 				{
 					GUILayout.BeginHorizontal();
 
@@ -274,29 +283,63 @@ namespace Tanukinomori
 
 					GUILayout.Label(CruiseAssistMainUI.RangeToString(range), textHeight < 30 ? nRangeLabelStyle : hRangeLabelStyle);
 
-					if (GUILayout.Button(actionName, textHeight < 30 ? nSetTargetButtonStyle : hSetTargetButtonStyle))
+					if (ListSelected == 2 && actionSelected[ListSelected] == 1)
 					{
-						if (actionSelected[ListSelected] == 0)
+						// BookmarkのSort
+
+						var index = CruiseAssist.Bookmark.IndexOf(id);
+						bool first = index == 0;
+						bool last = index == CruiseAssist.Bookmark.Count - 1;
+
+						if (GUILayout.Button(last ? "-" :  "↓", textHeight < 30 ? nSortButtonStyle : hSortButtonStyle) && !last)
 						{
-							SelectStar(star, planet);
+							CruiseAssist.Bookmark.RemoveAt(index);
+							CruiseAssist.Bookmark.Insert(index + 1, id);
 						}
-						else
+						if (GUILayout.Button(first ? "-" : "↑", textHeight < 30 ? nSortButtonStyle : hSortButtonStyle) && !first)
 						{
-							if (ListSelected == 1)
+							CruiseAssist.Bookmark.RemoveAt(index);
+							CruiseAssist.Bookmark.Insert(index - 1, id);
+						}
+					}
+					else
+					{
+						if (GUILayout.Button(actionName, textHeight < 30 ? nActionButtonStyle : hActionButtonStyle))
+						{
+							if (actionSelected[ListSelected] == 0)
 							{
-								if (!CruiseAssist.Bookmark.Contains(planet.id))
+								// 0番目(SET)を押したとき、対応する惑星を選択
+								SelectStar(star, planet);
+							}
+							else if (actionSelected[ListSelected] == 1)
+							{
+								// 1番目を押したとき
+
+								if (ListSelected == 1)
 								{
-									if (CruiseAssist.Bookmark.Count <= 128)
+									// History(1番目はADD)のとき
+
+									if (!CruiseAssist.Bookmark.Contains(planet.id))
 									{
-										CruiseAssist.Bookmark.Add(planet.id);
-										nextCheckGameTick = GameMain.gameTick + 300;
+										if (CruiseAssist.Bookmark.Count <= 128)
+										{
+											CruiseAssist.Bookmark.Add(planet.id);
+											nextCheckGameTick = GameMain.gameTick + 300;
+										}
 									}
 								}
 							}
-							else
+							else if (actionSelected[ListSelected] == 2)
 							{
-								CruiseAssist.Bookmark.Remove(planet.id);
-								nextCheckGameTick = GameMain.gameTick + 300;
+								// 2番目を押したとき
+
+								if (ListSelected == 2)
+								{
+									// Bookmark(2番目はDEL)のとき
+
+									CruiseAssist.Bookmark.Remove(planet.id);
+									nextCheckGameTick = GameMain.gameTick + 300;
+								}
 							}
 						}
 					}
@@ -316,20 +359,20 @@ namespace Tanukinomori
 			buttonStyle.fixedHeight = 20;
 			buttonStyle.fontSize = 12;
 
-			string[,] listButtonModeName =
+			string[][] listButtonModeName =
 			{
 				// Normal
-				{ "Target","Bookmark" },
+				new string[] { "Target", "Bookmark" },
 				// History
-				{ "Target","Bookmark" },
+				new string[] { "Target", "Bookmark" },
 				// Bookmark
-				{ "Target","Delete" },
+				new string[] { "Target", "Sort", "Delete" },
 			};
 
-			if (GUILayout.Button(listButtonModeName[ListSelected, actionSelected[ListSelected]], buttonStyle))
+			if (GUILayout.Button(listButtonModeName[ListSelected][actionSelected[ListSelected]], buttonStyle))
 			{
 				++actionSelected[ListSelected];
-				actionSelected[ListSelected] %= 2;
+				actionSelected[ListSelected] %= listButtonModeName[ListSelected].Length;
 			}
 
 			GUILayout.FlexibleSpace();
