@@ -149,6 +149,12 @@ namespace Tanukinomori.UI
 
 			GUILayout.EndHorizontal();
 
+			var toggleStyle = new GUIStyle(GUI.skin.toggle);
+			toggleStyle.fixedHeight = 20;
+			toggleStyle.fontSize = 12;
+
+			CruiseAssist.SelectFocusFlag = GUILayout.Toggle(CruiseAssist.SelectFocusFlag, "Focus when target selected.", toggleStyle);
+
 			GUILayout.FlexibleSpace();
 
 			GUILayout.BeginHorizontal();

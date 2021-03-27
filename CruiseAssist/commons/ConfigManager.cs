@@ -68,7 +68,7 @@ namespace Tanukinomori
 		{
 			if (orphanedEntries == null)
 			{
-				orphanedEntries = (Dictionary<ConfigDefinition, string>)AccessTools.Property(typeof(ConfigFile), "OrphanedEntries").GetValue(Config, null);
+				orphanedEntries = Traverse.Create(Config).Property<Dictionary<ConfigDefinition, string>>("OrphanedEntries").Value;
 			}
 			return orphanedEntries;
 		}

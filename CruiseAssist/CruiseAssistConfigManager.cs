@@ -35,6 +35,8 @@ namespace Tanukinomori
 
 				CruiseAssist.Enable = Bind("Setting", "Enable", true).Value;
 
+				CruiseAssist.SelectFocusFlag = Bind("Setting", "SelectFocus", true).Value;
+
 				CruiseAssistMainUI.Scale = (float)Bind("Setting", "UIScale", 150).Value;
 
 				var viewModeStr = Bind("Setting", "MainWindowViewMode", CruiseAssistMainUIViewMode.FULL.ToString()).Value;
@@ -64,6 +66,8 @@ namespace Tanukinomori
 			else if (step == Step.STATE)
 			{
 				saveFlag |= UpdateEntry("Setting", "Enable", CruiseAssist.Enable);
+
+				saveFlag |= UpdateEntry("Setting", "SelectFocus", CruiseAssist.SelectFocusFlag);
 
 				saveFlag |= UpdateEntry("Setting", "UIScale", (int)CruiseAssistMainUI.Scale);
 

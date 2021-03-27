@@ -394,6 +394,24 @@ namespace Tanukinomori
 			CruiseAssist.SelectTargetStar = star;
 			CruiseAssist.SelectTargetPlanet = planet;
 
+			var uiGame = UIRoot.instance.uiGame;
+
+			if (CruiseAssist.SelectFocusFlag && uiGame.starmap.active)
+			{
+				if (star != null)
+				{
+					var uiStar = uiGame.starmap.starUIs.Where(s => s.star.id == star.id).First();
+					UIStarmap_OnStarClick(uiGame.starmap, uiStar);
+					uiGame.starmap.OnCursorFunction2Click(0);
+				}
+				if (planet != null)
+				{
+					var uiPlanet = uiGame.starmap.planetUIs.Where(p => p.planet.id == planet.id).First();
+					UIStarmap_OnPlanetClick(uiGame.starmap, uiPlanet);
+					uiGame.starmap.OnCursorFunction2Click(0);
+				}
+			}
+
 			if (planet != null)
 			{
 				GameMain.mainPlayer.navigation.indicatorAstroId = planet.id;
@@ -408,6 +426,38 @@ namespace Tanukinomori
 			}
 
 			CruiseAssist.SelectTargetAstroId = GameMain.mainPlayer.navigation.indicatorAstroId;
+		}
+
+		private static void UIStarmap_OnStarClick(UIStarmap starmap, UIStarmapStar star)
+		{
+			var starmapTraverse = Traverse.Create(starmap);
+			if (starmap.focusStar != star)
+			{
+				if (starmap.viewPlanet != null || (starmap.viewStar != null && star.star != starmap.viewStar))
+				{
+					starmap.screenCameraController.DisablePositionLock();
+				}
+				starmap.focusPlanet = null;
+				starmap.focusStar = star;
+				starmapTraverse.Field("_lastClickTime").SetValue(0.0);
+			}
+			starmapTraverse.Field("forceUpdateCursorView").SetValue(true);
+		}
+
+		private static void UIStarmap_OnPlanetClick(UIStarmap starmap, UIStarmapPlanet planet)
+		{
+			var starmapTraverse = Traverse.Create(starmap);
+			if (starmap.focusPlanet != planet)
+			{
+				if ((starmap.viewPlanet != null && planet.planet != starmap.viewPlanet) || starmap.viewStar != null)
+				{
+					starmap.screenCameraController.DisablePositionLock();
+				}
+				starmap.focusPlanet = planet;
+				starmap.focusStar = null;
+				starmapTraverse.Field("_lastClickTime").SetValue(0.0);
+			}
+			starmapTraverse.Field("forceUpdateCursorView").SetValue(true);
 		}
 	}
 }
