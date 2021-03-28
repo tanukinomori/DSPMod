@@ -155,6 +155,8 @@ namespace Tanukinomori.UI
 
 			CruiseAssist.SelectFocusFlag = GUILayout.Toggle(CruiseAssist.SelectFocusFlag, "Focus when target selected.", toggleStyle);
 
+			CruiseAssist.HideDuplicateHistoryFlag = GUILayout.Toggle(CruiseAssist.HideDuplicateHistoryFlag, "Hide duplicate history.", toggleStyle);
+
 			GUILayout.FlexibleSpace();
 
 			GUILayout.BeginHorizontal();

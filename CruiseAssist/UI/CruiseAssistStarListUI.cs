@@ -256,6 +256,11 @@ namespace Tanukinomori
 
 				var list = ListSelected == 1 ? CruiseAssist.History.Reverse<int>() : CruiseAssist.Bookmark.ToList();
 
+				if (CruiseAssist.HideDuplicateHistoryFlag)
+				{
+					list = list.Distinct();
+				}
+
 				list.Do(id =>
 				{
 					GUILayout.BeginHorizontal();

@@ -36,6 +36,7 @@ namespace Tanukinomori
 				CruiseAssist.Enable = Bind("Setting", "Enable", true).Value;
 
 				CruiseAssist.SelectFocusFlag = Bind("Setting", "SelectFocus", true).Value;
+				CruiseAssist.HideDuplicateHistoryFlag = Bind("Setting", "HideDuplicateHistory", true).Value;
 
 				CruiseAssistMainUI.Scale = (float)Bind("Setting", "UIScale", 150).Value;
 
@@ -68,6 +69,7 @@ namespace Tanukinomori
 				saveFlag |= UpdateEntry("Setting", "Enable", CruiseAssist.Enable);
 
 				saveFlag |= UpdateEntry("Setting", "SelectFocus", CruiseAssist.SelectFocusFlag);
+				saveFlag |= UpdateEntry("Setting", "HideDuplicateHistory", CruiseAssist.HideDuplicateHistoryFlag);
 
 				saveFlag |= UpdateEntry("Setting", "UIScale", (int)CruiseAssistMainUI.Scale);
 

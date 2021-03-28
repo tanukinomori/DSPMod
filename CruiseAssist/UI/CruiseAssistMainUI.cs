@@ -285,7 +285,12 @@ namespace Tanukinomori
 
 		public static string TimeToString(double time)
 		{
-			return time.ToString("0.0") + "s ";
+			int s = (int)(time + 0.5);
+			int m = s / 60;
+			int h = m / 60;
+			s %= 60;
+			m %= 60;
+			return string.Format("{0:00} {1:00} {2:00}", h, m, s);
 		}
 	}
 }
