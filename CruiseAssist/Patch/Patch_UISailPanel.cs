@@ -94,14 +94,19 @@ namespace Tanukinomori
 		public static void OnFree_Prefix() =>
 			LogManager.LogInfo($"enter {CLASS_NAME}._OnFree");
 
-		[HarmonyPatch("_OnOpen"), HarmonyPrefix]
-		public static void OnOpen_Prefix() =>
-			LogManager.LogInfo($"enter {CLASS_NAME}._OnOpen");
-
 		[HarmonyPatch("_OnUpdate"), HarmonyPrefix]
 		public static void OnUpdate_Prefix() =>
 			LogManager.LogInfo($"enter {CLASS_NAME}._OnUpdate");
 #endif
+		[HarmonyPatch("_OnOpen"), HarmonyPrefix]
+		public static void OnOpen_Prefix()
+		{
+			if (CruiseAssist.AutoDisableLockCursorFlag)
+			{
+				UIRoot.instance.uiGame.disableLockCursor = true;
+			}
+		}
+
 		[HarmonyPatch("_OnClose"), HarmonyPrefix]
 		public static void OnClose_Prefix()
 		{

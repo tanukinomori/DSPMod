@@ -157,6 +157,8 @@ namespace Tanukinomori.UI
 
 			CruiseAssist.HideDuplicateHistoryFlag = GUILayout.Toggle(CruiseAssist.HideDuplicateHistoryFlag, "Hide duplicate history.", toggleStyle);
 
+			CruiseAssist.AutoDisableLockCursorFlag = GUILayout.Toggle(CruiseAssist.AutoDisableLockCursorFlag, "Disable lock cursor when starting sail mode.", toggleStyle);
+
 			GUILayout.FlexibleSpace();
 
 			GUILayout.BeginHorizontal();

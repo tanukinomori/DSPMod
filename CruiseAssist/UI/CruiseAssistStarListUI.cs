@@ -263,9 +263,11 @@ namespace Tanukinomori
 
 				list.Do(id =>
 				{
-					GUILayout.BeginHorizontal();
-
 					var planet = GameMain.galaxy.PlanetById(id);
+					if (planet == null)
+					{
+						return;
+					}
 					var star = planet.star;
 					var starName = CruiseAssist.GetStarName(star);
 					var range = (planet.uPosition - GameMain.mainPlayer.uPosition).magnitude;
@@ -279,6 +281,8 @@ namespace Tanukinomori
 						nRangeLabelStyle.normal.textColor = Color.cyan;
 						highlighted = true;
 					}
+
+					GUILayout.BeginHorizontal();
 
 					var text = starName + " - " + CruiseAssist.GetPlanetName(planet);
 					GUILayout.Label(text, nameLabelStyle);
