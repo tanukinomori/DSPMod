@@ -14,7 +14,7 @@ namespace Tanukinomori
 	{
 		public const string ModGuid = "tanu.CruiseAssist";
 		public const string ModName = "CruiseAssist";
-		public const string ModVersion = "0.0.21";
+		public const string ModVersion = "0.0.22";
 
 		public static bool Enable = true;
 		public static bool SelectFocusFlag = false;

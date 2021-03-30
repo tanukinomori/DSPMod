@@ -96,18 +96,6 @@ namespace Tanukinomori
 
 			scrollPos = GUILayout.BeginScrollView(scrollPos);
 
-			string[][] listButtonActionName =
-			{
-				// Normal
-				new string[] { "SET", "ADD" },
-				// History
-				new string[] { "SET", "ADD" },
-				// Bookmark
-				new string[] { "SET", null, "DEL" },
-			};
-
-			var actionName = listButtonActionName[ListSelected][actionSelected[ListSelected]];
-
 			var nameLabelStyle = new GUIStyle(GUI.skin.label);
 			nameLabelStyle.fixedWidth = 240;
 			nameLabelStyle.stretchHeight = true;
@@ -197,18 +185,30 @@ namespace Tanukinomori
 
 								GUILayout.Label(CruiseAssistMainUI.RangeToString(planet == null ? range : range2), textHeight < 30 ? nRangeLabelStyle : hRangeLabelStyle);
 
-								if (GUILayout.Button(actionSelected[ListSelected] == 1 && planet == null ? "-" : actionName, textHeight < 30 ? nActionButtonStyle : hActionButtonStyle))
+								var actionName =
+									actionSelected[ListSelected] == 0 ? "SET" :
+									planet == null ? "-" :
+									CruiseAssist.Bookmark.Contains(planet.id) ? "DEL" : "ADD";
+
+								if (GUILayout.Button(actionName, textHeight < 30 ? nActionButtonStyle : hActionButtonStyle))
 								{
 									if (actionSelected[ListSelected] == 0)
 									{
 										SelectStar(star, planet);
 									}
-									else if (planet != null && !CruiseAssist.Bookmark.Contains(planet.id))
+									else if (planet != null)
 									{
-										if (CruiseAssist.Bookmark.Count <= 128)
+										if (CruiseAssist.Bookmark.Contains(planet.id))
 										{
-											CruiseAssist.Bookmark.Add(planet.id);
-											nextCheckGameTick = GameMain.gameTick + 300;
+											CruiseAssist.Bookmark.Remove(planet.id);
+										}
+										else
+										{
+											if (CruiseAssist.Bookmark.Count <= 128)
+											{
+												CruiseAssist.Bookmark.Add(planet.id);
+												nextCheckGameTick = GameMain.gameTick + 300;
+											}
 										}
 									}
 								}
@@ -238,7 +238,10 @@ namespace Tanukinomori
 
 						GUILayout.Label(CruiseAssistMainUI.RangeToString(range), textHeight < 30 ? nRangeLabelStyle : hRangeLabelStyle);
 
-						if (GUILayout.Button(actionSelected[ListSelected] == 1 ? "-" : actionName, textHeight < 30 ? nActionButtonStyle : hActionButtonStyle))
+						var actionName =
+							actionSelected[ListSelected] == 0 ? "SET" : "-";
+
+						if (GUILayout.Button(actionName, textHeight < 30 ? nActionButtonStyle : hActionButtonStyle))
 						{
 							if (actionSelected[ListSelected] == 0)
 							{
@@ -313,6 +316,11 @@ namespace Tanukinomori
 					}
 					else
 					{
+						var actionName =
+							actionSelected[ListSelected] == 0 ? "SET" :
+							actionSelected[ListSelected] == 2 ? "DEL" :
+							CruiseAssist.Bookmark.Contains(id) ? "DEL" : "ADD";
+
 						if (GUILayout.Button(actionName, textHeight < 30 ? nActionButtonStyle : hActionButtonStyle))
 						{
 							if (actionSelected[ListSelected] == 0)
@@ -328,11 +336,15 @@ namespace Tanukinomori
 								{
 									// History(1番目はADD)のとき
 
-									if (!CruiseAssist.Bookmark.Contains(planet.id))
+									if (CruiseAssist.Bookmark.Contains(id))
+									{
+										CruiseAssist.Bookmark.Remove(id);
+									}
+									else
 									{
 										if (CruiseAssist.Bookmark.Count <= 128)
 										{
-											CruiseAssist.Bookmark.Add(planet.id);
+											CruiseAssist.Bookmark.Add(id);
 											nextCheckGameTick = GameMain.gameTick + 300;
 										}
 									}
