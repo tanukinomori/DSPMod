@@ -259,13 +259,17 @@ namespace Tanukinomori
 
 				var list = ListSelected == 1 ? CruiseAssist.History.Reverse<int>() : CruiseAssist.Bookmark.ToList();
 
-				if (CruiseAssist.HideDuplicateHistoryFlag)
+				if (ListSelected == 1 && actionSelected[ListSelected] != 2 && CruiseAssist.HideDuplicateHistoryFlag)
 				{
 					list = list.Distinct();
 				}
 
+				var listIndex = -1;
+
 				list.Do(id =>
 				{
+					++listIndex;
+
 					var planet = GameMain.galaxy.PlanetById(id);
 					if (planet == null)
 					{
@@ -303,7 +307,7 @@ namespace Tanukinomori
 						bool first = index == 0;
 						bool last = index == CruiseAssist.Bookmark.Count - 1;
 
-						if (GUILayout.Button(last ? "-" :  "↓", textHeight < 30 ? nSortButtonStyle : hSortButtonStyle) && !last)
+						if (GUILayout.Button(last ? "-" : "↓", textHeight < 30 ? nSortButtonStyle : hSortButtonStyle) && !last)
 						{
 							CruiseAssist.Bookmark.RemoveAt(index);
 							CruiseAssist.Bookmark.Insert(index + 1, id);
@@ -318,7 +322,7 @@ namespace Tanukinomori
 					{
 						var actionName =
 							actionSelected[ListSelected] == 0 ? "SET" :
-							actionSelected[ListSelected] == 2 ? "DEL" :
+							actionSelected[ListSelected] == 2 ? (ListSelected == 1 && listIndex == 0 ? "-" : "DEL") :
 							CruiseAssist.Bookmark.Contains(id) ? "DEL" : "ADD";
 
 						if (GUILayout.Button(actionName, textHeight < 30 ? nActionButtonStyle : hActionButtonStyle))
@@ -354,7 +358,17 @@ namespace Tanukinomori
 							{
 								// 2番目を押したとき
 
-								if (ListSelected == 2)
+								if (ListSelected == 1)
+								{
+									// History(2番目はDEL)のとき
+
+									if (listIndex != 0)
+									{
+										CruiseAssist.History.RemoveAt(CruiseAssist.History.Count - 1 - listIndex);
+										nextCheckGameTick = GameMain.gameTick + 300;
+									}
+								}
+								else if (ListSelected == 2)
 								{
 									// Bookmark(2番目はDEL)のとき
 
@@ -385,7 +399,7 @@ namespace Tanukinomori
 				// Normal
 				new string[] { "Target", "Bookmark" },
 				// History
-				new string[] { "Target", "Bookmark" },
+				new string[] { "Target", "Bookmark", "Delete" },
 				// Bookmark
 				new string[] { "Target", "Sort", "Delete" },
 			};
