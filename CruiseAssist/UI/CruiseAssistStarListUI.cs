@@ -85,7 +85,12 @@ namespace Tanukinomori
 			mainWindowStyleButtonStyle.fontSize = 12;
 
 			string[] texts = { "Normal", "History", "Bookmark" };
+			GUI.changed = false;
 			var selected = GUILayout.Toolbar(ListSelected, texts, mainWindowStyleButtonStyle);
+			if (GUI.changed)
+			{
+				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+			}
 			if (selected != ListSelected)
 			{
 				ListSelected = selected;
@@ -192,6 +197,8 @@ namespace Tanukinomori
 
 								if (GUILayout.Button(actionName, textHeight < 30 ? nActionButtonStyle : hActionButtonStyle))
 								{
+									VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+
 									if (actionSelected[ListSelected] == 0)
 									{
 										SelectStar(star, planet);
@@ -243,6 +250,8 @@ namespace Tanukinomori
 
 						if (GUILayout.Button(actionName, textHeight < 30 ? nActionButtonStyle : hActionButtonStyle))
 						{
+							VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+
 							if (actionSelected[ListSelected] == 0)
 							{
 								SelectStar(star, null);
@@ -307,15 +316,25 @@ namespace Tanukinomori
 						bool first = index == 0;
 						bool last = index == CruiseAssist.Bookmark.Count - 1;
 
-						if (GUILayout.Button(last ? "-" : "↓", textHeight < 30 ? nSortButtonStyle : hSortButtonStyle) && !last)
+						if (GUILayout.Button(last ? "-" : "↓", textHeight < 30 ? nSortButtonStyle : hSortButtonStyle))
 						{
-							CruiseAssist.Bookmark.RemoveAt(index);
-							CruiseAssist.Bookmark.Insert(index + 1, id);
+							VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+
+							if (!last)
+							{
+								CruiseAssist.Bookmark.RemoveAt(index);
+								CruiseAssist.Bookmark.Insert(index + 1, id);
+							}
 						}
-						if (GUILayout.Button(first ? "-" : "↑", textHeight < 30 ? nSortButtonStyle : hSortButtonStyle) && !first)
+						if (GUILayout.Button(first ? "-" : "↑", textHeight < 30 ? nSortButtonStyle : hSortButtonStyle))
 						{
-							CruiseAssist.Bookmark.RemoveAt(index);
-							CruiseAssist.Bookmark.Insert(index - 1, id);
+							VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+
+							if (!first)
+							{
+								CruiseAssist.Bookmark.RemoveAt(index);
+								CruiseAssist.Bookmark.Insert(index - 1, id);
+							}
 						}
 					}
 					else
@@ -327,6 +346,8 @@ namespace Tanukinomori
 
 						if (GUILayout.Button(actionName, textHeight < 30 ? nActionButtonStyle : hActionButtonStyle))
 						{
+							VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+
 							if (actionSelected[ListSelected] == 0)
 							{
 								// 0番目(SET)を押したとき、対応する惑星を選択
@@ -406,6 +427,7 @@ namespace Tanukinomori
 
 			if (GUILayout.Button(listButtonModeName[ListSelected][actionSelected[ListSelected]], buttonStyle))
 			{
+				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
 				++actionSelected[ListSelected];
 				actionSelected[ListSelected] %= listButtonModeName[ListSelected].Length;
 			}
@@ -414,6 +436,7 @@ namespace Tanukinomori
 
 			if (GUILayout.Button("Close", buttonStyle))
 			{
+				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
 				Show[wIdx] = false;
 			}
 

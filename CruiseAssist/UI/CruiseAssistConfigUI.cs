@@ -90,7 +90,12 @@ namespace Tanukinomori.UI
 			string[] texts = { "FULL", "MINI" };
 			int listSelected =
 				CruiseAssistMainUI.ViewMode == CruiseAssistMainUIViewMode.FULL ? 0 : 1;
+			GUI.changed = false;
 			var selected = GUILayout.Toolbar(listSelected, texts, mainWindowStyleButtonStyle);
+			if (GUI.changed)
+			{
+				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+			}
 			if (selected != listSelected)
 			{
 				switch (selected)
@@ -143,6 +148,7 @@ namespace Tanukinomori.UI
 
 			if (GUILayout.Button("SET", scaleSetButtonStyle))
 			{
+				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
 				CruiseAssistMainUI.Scale = TempScale;
 				nextCheckGameTick = GameMain.gameTick + 300;
 			}
@@ -153,11 +159,26 @@ namespace Tanukinomori.UI
 			toggleStyle.fixedHeight = 20;
 			toggleStyle.fontSize = 12;
 
+			GUI.changed = false;
 			CruiseAssist.SelectFocusFlag = GUILayout.Toggle(CruiseAssist.SelectFocusFlag, "Focus when target selected.", toggleStyle);
+			if (GUI.changed)
+			{
+				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+			}
 
+			GUI.changed = false;
 			CruiseAssist.HideDuplicateHistoryFlag = GUILayout.Toggle(CruiseAssist.HideDuplicateHistoryFlag, "Hide duplicate history.", toggleStyle);
+			if (GUI.changed)
+			{
+				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+			}
 
+			GUI.changed = false;
 			CruiseAssist.AutoDisableLockCursorFlag = GUILayout.Toggle(CruiseAssist.AutoDisableLockCursorFlag, "Disable lock cursor when starting sail mode.", toggleStyle);
+			if (GUI.changed)
+			{
+				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+			}
 
 			GUILayout.FlexibleSpace();
 
@@ -172,6 +193,7 @@ namespace Tanukinomori.UI
 
 			if (GUILayout.Button("Close", closeButtonStyle))
 			{
+				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
 				Show[wIdx] = false;
 			}
 

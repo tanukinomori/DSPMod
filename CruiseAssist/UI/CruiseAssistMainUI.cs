@@ -230,6 +230,8 @@ namespace Tanukinomori
 
 				if (GUILayout.Button("Config", buttonStyle))
 				{
+					VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+
 					CruiseAssistConfigUI.Show[wIdx] ^= true;
 					if (CruiseAssistConfigUI.Show[wIdx])
 					{
@@ -239,6 +241,7 @@ namespace Tanukinomori
 
 				if (GUILayout.Button(CruiseAssist.Enable ? "Enable" : "Disable", buttonStyle))
 				{
+					VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
 					CruiseAssist.Enable ^= true;
 					nextCheckGameTick = GameMain.gameTick + 300;
 				}
@@ -249,11 +252,13 @@ namespace Tanukinomori
 
 				if (GUILayout.Button("StarList", buttonStyle))
 				{
+					VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
 					CruiseAssistStarListUI.Show[wIdx] ^= true;
 				}
 
 				if (GUILayout.Button("Cancel", buttonStyle))
 				{
+					VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
 					CruiseAssistStarListUI.SelectStar(null, null);
 				}
 
