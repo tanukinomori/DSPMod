@@ -6,7 +6,7 @@ namespace Tanukinomori
 {
 	public class CruiseAssistMainUI
 	{
-		public static float Scale = 100.0f;
+		public static float Scale = 150.0f;
 
 		public static int wIdx = 0;
 

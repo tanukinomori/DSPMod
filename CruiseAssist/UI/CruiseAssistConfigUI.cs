@@ -19,7 +19,7 @@ namespace Tanukinomori.UI
 		private static float lastCheckWindowTop = float.MinValue;
 		private static long nextCheckGameTick = long.MaxValue;
 
-		public static float TempScale = 100.0f;
+		public static float TempScale = 150.0f;
 
 		public static void OnGUI()
 		{

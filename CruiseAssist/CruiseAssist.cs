@@ -14,7 +14,7 @@ namespace Tanukinomori
 	{
 		public const string ModGuid = "tanu.CruiseAssist";
 		public const string ModName = "CruiseAssist";
-		public const string ModVersion = "0.0.24";
+		public const string ModVersion = "0.0.25";
 
 		public static bool Enable = true;
 		public static bool SelectFocusFlag = false;
@@ -81,6 +81,25 @@ namespace Tanukinomori
 				{
 					CruiseAssistDebugUI.OnGUI();
 				}
+
+				bool resetInputFlag = false;
+
+				resetInputFlag = ResetInput(CruiseAssistMainUI.Rect[CruiseAssistMainUI.wIdx], scale);
+
+				if (!resetInputFlag && CruiseAssistStarListUI.Show[CruiseAssistMainUI.wIdx])
+				{
+					resetInputFlag = ResetInput(CruiseAssistStarListUI.Rect[CruiseAssistMainUI.wIdx], scale);
+				}
+
+				if (!resetInputFlag && CruiseAssistConfigUI.Show[CruiseAssistMainUI.wIdx])
+				{
+					resetInputFlag = ResetInput(CruiseAssistConfigUI.Rect[CruiseAssistMainUI.wIdx], scale);
+				}
+
+				if (!resetInputFlag && CruiseAssistDebugUI.Show)
+				{
+					resetInputFlag = ResetInput(CruiseAssistDebugUI.Rect, scale);
+				}
 			}
 		}
 
@@ -115,6 +134,26 @@ namespace Tanukinomori
 					ConfigManager.CheckConfig(ConfigManager.Step.STATE);
 				}
 			}
+		}
+
+		private bool ResetInput(Rect rect, float scale)
+		{
+			var left = rect.xMin * scale;
+			var right = rect.xMax * scale;
+			var top = rect.yMin * scale;
+			var bottom = rect.yMax * scale;
+			var inputX = Input.mousePosition.x;
+			var inputY = Screen.height - Input.mousePosition.y;
+			if (left <= inputX && inputX <= right && top <= inputY && inputY <= bottom)
+			{
+				int[] zot = { 0, 1, 2 };
+				if (zot.Any(Input.GetMouseButton) || Input.mouseScrollDelta.y != 0)
+				{
+					Input.ResetInputAxes();
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 }

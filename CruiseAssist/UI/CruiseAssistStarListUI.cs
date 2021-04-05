@@ -24,7 +24,7 @@ namespace Tanukinomori
 		private static float lastCheckWindowTop = float.MinValue;
 		private static long nextCheckGameTick = long.MaxValue;
 
-		private static Vector2 scrollPos = Vector2.zero;
+		private static Vector2[] scrollPos = { Vector2.zero, Vector2.zero, Vector2.zero };
 
 		public static void OnGUI()
 		{
@@ -99,7 +99,7 @@ namespace Tanukinomori
 
 			GUILayout.EndHorizontal();
 
-			scrollPos = GUILayout.BeginScrollView(scrollPos);
+			scrollPos[ListSelected] = GUILayout.BeginScrollView(scrollPos[ListSelected]);
 
 			var nameLabelStyle = new GUIStyle(GUI.skin.label);
 			nameLabelStyle.fixedWidth = 240;

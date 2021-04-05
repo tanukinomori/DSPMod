@@ -1,6 +1,5 @@
 ﻿using BepInEx.Configuration;
 using System.Linq;
-using Tanukinomori.commons;
 using Tanukinomori.UI;
 
 namespace Tanukinomori
@@ -61,8 +60,8 @@ namespace Tanukinomori
 
 				if (GameMain.galaxy != null)
 				{
-					CruiseAssist.History = ListUtils.Parse(Bind("Save", $"History_{GameMain.galaxy.seed}", "").Value);
-					CruiseAssist.Bookmark = ListUtils.Parse(Bind("Save", $"Bookmark_{GameMain.galaxy.seed}", "").Value);
+					CruiseAssist.History = ListUtils.ParseToIntList(Bind("Save", $"History_{GameMain.galaxy.seed}", "").Value);
+					CruiseAssist.Bookmark = ListUtils.ParseToIntList(Bind("Save", $"Bookmark_{GameMain.galaxy.seed}", "").Value);
 				}
 			}
 			else if (step == Step.STATE)
@@ -98,10 +97,6 @@ namespace Tanukinomori
 			if (saveFlag)
 			{
 				Save(false);
-			}
-			if (step == Step.AWAKE || step == Step.GAME_MAIN_BEGIN)
-			{
-				LogManager.LogInfo("config reloaded.");
 			}
 		}
 	}
