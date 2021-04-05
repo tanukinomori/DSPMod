@@ -19,14 +19,20 @@ namespace Tanukinomori
 				var modVersion = Bind<string>("Base", "ModVersion", MovePlanet.ModVersion, "Don't change.");
 				modVersion.Value = MovePlanet.ModVersion;
 
+				Migration("State", "MainWindow0Left", 100, "State", "MainWindowLeft");
+				Migration("State", "MainWindow0Top", 100, "State", "MainWindowTop");
+
 				saveFlag = true;
 			}
 			if (step == Step.AWAKE || step == Step.UNIVERSE_GEN_CREATE_GALAXY)
 			{
 				MovePlanet.ConfigEnable = Bind("Setting", "Enable", true).Value;
 
-				MovePlanetMainUI.Rect.x = (float)Bind("State", "MainWindowLeft", 100).Value;
-				MovePlanetMainUI.Rect.y = (float)Bind("State", "MainWindowTop", 100).Value;
+				for (int i = 0; i < 2; ++i)
+				{
+					MovePlanetMainUI.Rect[i].x = (float)Bind("State", $"MainWindow{i}Left", 100).Value;
+					MovePlanetMainUI.Rect[i].y = (float)Bind("State", $"MainWindow{i}Top", 100).Value;
+				}
 
 				MovePlanetStarListUI.Rect.x = (float)Bind("State", "StarListWindowLeft", 100).Value;
 				MovePlanetStarListUI.Rect.y = (float)Bind("State", "StarListWindowTop", 100).Value;
@@ -49,8 +55,11 @@ namespace Tanukinomori
 			{
 				saveFlag |= UpdateEntry("Setting", "Enable", MovePlanet.ConfigEnable);
 
-				saveFlag |= UpdateEntry("State", "MainWindowLeft", (int)MovePlanetMainUI.Rect.x);
-				saveFlag |= UpdateEntry("State", "MainWindowTop", (int)MovePlanetMainUI.Rect.y);
+				for (int i = 0; i < 2; ++i)
+				{
+					saveFlag |= UpdateEntry("State", $"MainWindow{i}Left", (int)MovePlanetMainUI.Rect[i].x);
+					saveFlag |= UpdateEntry("State", $"MainWindow{i}Top", (int)MovePlanetMainUI.Rect[i].y);
+				}
 
 				saveFlag |= UpdateEntry("State", "StarListWindowLeft", (int)MovePlanetStarListUI.Rect.x);
 				saveFlag |= UpdateEntry("State", "StarListWindowTop", (int)MovePlanetStarListUI.Rect.y);

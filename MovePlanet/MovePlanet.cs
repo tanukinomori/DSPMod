@@ -11,10 +11,11 @@ namespace Tanukinomori
 	{
 		public const string ModGuid = "tanu.MovePlanet";
 		public const string ModName = "MovePlanet";
-		public const string ModVersion = "0.0.1";
+		public const string ModVersion = "0.0.2";
 
 		public static bool ConfigEnable = true;
-		public static bool SessionEnable = true;
+		public static bool SessionEnable = false;
+		public static bool LoadGameWindowActive = false;
 
 		public static List<Tuple<int, int>> PlanetStarMapping = new List<Tuple<int, int>>();
 
@@ -31,6 +32,7 @@ namespace Tanukinomori
 			harmony.PatchAll(typeof(Patch_ImportExport));
 			harmony.PatchAll(typeof(Patch_StationComponent));
 			harmony.PatchAll(typeof(Patch_DysonSphere));
+			harmony.PatchAll(typeof(Patch_UILoadGameWindow));
 		}
 
 		public static void MovePlanetToStar(int targetPlanetId, int toStarId)
@@ -177,31 +179,77 @@ namespace Tanukinomori
 
 		public void OnGUI()
 		{
+			bool show = true;
+
 			if (DSPGame.IsMenuDemo || GameMain.mainPlayer == null)
 			{
-				return;
+				show = false;
 			}
 			var uiGame = UIRoot.instance.uiGame;
-			if (!uiGame.guideComplete || uiGame.techTree.active || uiGame.escMenu.active || uiGame.dysonmap.active || uiGame.hideAllUI0 || uiGame.hideAllUI1)
+			if (show && (!uiGame.guideComplete || uiGame.techTree.active || uiGame.escMenu.active || uiGame.dysonmap.active || uiGame.hideAllUI0 || uiGame.hideAllUI1))
 			{
-				return;
+				show = false;
 			}
-			if (uiGame.starmap.active)
+			if (show && !uiGame.starmap.active)
 			{
+				show = false;
+			}
+			if (LoadGameWindowActive)
+			{
+				show = true;
+			}
+			if (show)
+			{
+				MovePlanetMainUI.wIdx = LoadGameWindowActive ? 1 : 0;
+
 				var scale = MovePlanetMainUI.Scale / 100.0f;
 
 				GUIUtility.ScaleAroundPivot(new Vector2(scale, scale), Vector2.zero);
 
 				MovePlanetMainUI.OnGUI();
-				if (MovePlanetStarListUI.Show)
+				if (MovePlanetStarListUI.Show[MovePlanetMainUI.wIdx])
 				{
 					MovePlanetStarListUI.OnGUI();
 				}
-				if (MovePlanetConfigUI.Show)
+				if (MovePlanetConfigUI.Show[MovePlanetMainUI.wIdx])
 				{
 					MovePlanetConfigUI.OnGUI();
 				}
+
+				bool resetInputFlag = false;
+
+				resetInputFlag = ResetInput(MovePlanetMainUI.Rect[MovePlanetMainUI.wIdx], scale);
+
+				if (!resetInputFlag && MovePlanetStarListUI.Show[MovePlanetMainUI.wIdx])
+				{
+					resetInputFlag = ResetInput(MovePlanetStarListUI.Rect, scale);
+				}
+
+				if (!resetInputFlag && MovePlanetConfigUI.Show[MovePlanetMainUI.wIdx])
+				{
+					resetInputFlag = ResetInput(MovePlanetConfigUI.Rect, scale);
+				}
 			}
+		}
+
+		private bool ResetInput(Rect rect, float scale)
+		{
+			var left = rect.xMin * scale;
+			var right = rect.xMax * scale;
+			var top = rect.yMin * scale;
+			var bottom = rect.yMax * scale;
+			var inputX = Input.mousePosition.x;
+			var inputY = Screen.height - Input.mousePosition.y;
+			if (left <= inputX && inputX <= right && top <= inputY && inputY <= bottom)
+			{
+				int[] zot = { 0, 1, 2 };
+				if (zot.Any(Input.GetMouseButton) || Input.mouseScrollDelta.y != 0)
+				{
+					Input.ResetInputAxes();
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 }

@@ -6,11 +6,15 @@ namespace Tanukinomori
 	{
 		public static float Scale = 150.0f;
 
+		public static int wIdx = 0;
+
 		public static float WindowWidth = 273f;
 		public static float WindowHeight = 70f;
 
 		public static bool Show = false;
-		public static Rect Rect = new Rect(0f, 0f, WindowWidth, WindowHeight);
+		public static Rect[] Rect = {
+			new Rect(0f, 0f, WindowWidth, WindowHeight),
+			new Rect(0f, 0f, WindowWidth, WindowHeight) };
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
@@ -21,38 +25,38 @@ namespace Tanukinomori
 			var windowStyle = new GUIStyle(GUI.skin.window);
 			windowStyle.fontSize = 11;
 
-			Rect = GUILayout.Window(99502251, Rect, WindowFunction, "MovePlanet", windowStyle);
+			Rect[wIdx] = GUILayout.Window(99502251, Rect[wIdx], WindowFunction, "MovePlanet", windowStyle);
 
 			var scale = Scale / 100.0f;
 
-			if (Screen.width / scale < Rect.xMax)
+			if (Screen.width / scale < Rect[wIdx].xMax)
 			{
-				Rect.x = Screen.width / scale - Rect.width;
+				Rect[wIdx].x = Screen.width / scale - Rect[wIdx].width;
 			}
-			if (Rect.x < 0)
+			if (Rect[wIdx].x < 0)
 			{
-				Rect.x = 0;
+				Rect[wIdx].x = 0;
 			}
 
-			if (Screen.height / scale < Rect.yMax)
+			if (Screen.height / scale < Rect[wIdx].yMax)
 			{
-				Rect.y = Screen.height / scale - Rect.height;
+				Rect[wIdx].y = Screen.height / scale - Rect[wIdx].height;
 			}
-			if (Rect.y < 0)
+			if (Rect[wIdx].y < 0)
 			{
-				Rect.y = 0;
+				Rect[wIdx].y = 0;
 			}
 
 			if (lastCheckWindowLeft != float.MinValue)
 			{
-				if (Rect.x != lastCheckWindowLeft || Rect.y != lastCheckWindowTop)
+				if (Rect[wIdx].x != lastCheckWindowLeft || Rect[wIdx].y != lastCheckWindowTop)
 				{
 					nextCheckGameTick = GameMain.gameTick + 300;
 				}
 			}
 
-			lastCheckWindowLeft = Rect.x;
-			lastCheckWindowTop = Rect.y;
+			lastCheckWindowLeft = Rect[wIdx].x;
+			lastCheckWindowTop = Rect[wIdx].y;
 
 			if (nextCheckGameTick <= GameMain.gameTick)
 			{
@@ -93,14 +97,17 @@ namespace Tanukinomori
 
 				GUILayout.BeginVertical();
 
-				if (GUILayout.Button("Config", buttonStyle))
+				if (GUILayout.Button(wIdx != 1 ? "Config" : "-", buttonStyle))
 				{
 					VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
 
-					MovePlanetConfigUI.Show ^= true;
-					if (MovePlanetConfigUI.Show)
+					if (wIdx != 1)
 					{
-						MovePlanetConfigUI.TempScale = MovePlanetMainUI.Scale;
+						MovePlanetConfigUI.Show[wIdx] ^= true;
+						if (MovePlanetConfigUI.Show[wIdx])
+						{
+							MovePlanetConfigUI.TempScale = MovePlanetMainUI.Scale;
+						}
 					}
 				}
 
@@ -108,17 +115,21 @@ namespace Tanukinomori
 				{
 					VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
 					MovePlanet.ConfigEnable ^= true;
-					nextCheckGameTick = GameMain.gameTick + 300;
+					ConfigManager.CheckConfig(ConfigManager.Step.STATE);
 				}
 
 				GUILayout.EndVertical();
 
 				GUILayout.BeginVertical();
 
-				if (GUILayout.Button("StarList", buttonStyle))
+				if (GUILayout.Button(wIdx != 1 ? "StarList" : "-", buttonStyle))
 				{
 					VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
-					MovePlanetStarListUI.Show ^= true;
+
+					if (wIdx != 1)
+					{
+						MovePlanetStarListUI.Show[wIdx] ^= true;
+					}
 				}
 
 				if (GUILayout.Button("-", buttonStyle))

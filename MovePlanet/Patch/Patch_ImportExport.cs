@@ -43,7 +43,7 @@ namespace Tanukinomori
 					MovePlanet.OldNewIdMap.Clear();
 					MovePlanet.SessionEnable = false;
 
-					if (!MovePlanet.ConfigEnable)
+					if (DSPGame.IsMenuDemo || !MovePlanet.ConfigEnable || MovePlanet.PlanetStarMapping.Count == 0)
 					{
 						return;
 					}
@@ -398,6 +398,35 @@ namespace Tanukinomori
 			return matcher.InstructionEnumeration();
 		}
 
+		[HarmonyPatch(typeof(ProductionStatistics), nameof(ProductionStatistics.Import)), HarmonyTranspiler]
+		public static IEnumerable<CodeInstruction> ProductionStatistics_Import_Transpiler(IEnumerable<CodeInstruction> instructions)
+		{
+			CodeMatcher matcher = new CodeMatcher(instructions);
+
+			int ins = 0;
+
+			matcher.
+				MatchForward(true,
+					new CodeMatch(OpCodes.Ldarg_1),
+					new CodeMatch(i => i.opcode == OpCodes.Callvirt && ((MethodInfo)i.operand).Name == nameof(BinaryReader.ReadInt32)), // 103:42
+					new CodeMatch(OpCodes.Stelem_I4)); // 103:43
+
+			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
+
+			if (matcher.Pos != 43)
+			{
+				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				return instructions;
+			}
+
+			matcher.
+				InsertAndAdvance(Transpilers.EmitDelegate<Func<int, int>>(MovePlanet.GetNewId));
+
+			ins += 1;
+
+			return matcher.InstructionEnumeration();
+		}
+
 		[HarmonyPatch(typeof(ProductionStatistics), nameof(ProductionStatistics.Export)), HarmonyTranspiler]
 		public static IEnumerable<CodeInstruction> ProductionStatistics_Export_Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
@@ -426,8 +455,8 @@ namespace Tanukinomori
 			return matcher.InstructionEnumeration();
 		}
 
-		[HarmonyPatch(typeof(ProductionStatistics), nameof(ProductionStatistics.Import)), HarmonyTranspiler]
-		public static IEnumerable<CodeInstruction> ProductionStatistics_Import_Transpiler(IEnumerable<CodeInstruction> instructions)
+		[HarmonyPatch(typeof(GameHistoryData), nameof(GameHistoryData.Import)), HarmonyTranspiler]
+		public static IEnumerable<CodeInstruction> GameHistoryData_Import_Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
 			CodeMatcher matcher = new CodeMatcher(instructions);
 
@@ -435,20 +464,80 @@ namespace Tanukinomori
 
 			matcher.
 				MatchForward(true,
+					new CodeMatch(OpCodes.Ldloc_S),
+					new CodeMatch(OpCodes.Blt),
 					new CodeMatch(OpCodes.Ldarg_1),
-					new CodeMatch(i => i.opcode == OpCodes.Callvirt && ((MethodInfo)i.operand).Name == nameof(BinaryReader.ReadInt32)), // 103:42
-					new CodeMatch(OpCodes.Stelem_I4)); // 103:43
+					new CodeMatch(i => i.opcode == OpCodes.Callvirt && ((MethodInfo)i.operand).Name == nameof(BinaryReader.ReadInt32)),
+					new CodeMatch(OpCodes.Stloc_S),
+					new CodeMatch(OpCodes.Ldc_I4_0),
+					new CodeMatch(OpCodes.Stloc_S),
+					new CodeMatch(OpCodes.Br),
+					new CodeMatch(OpCodes.Ldarg_1),
+					new CodeMatch(i => i.opcode == OpCodes.Callvirt && ((MethodInfo)i.operand).Name == nameof(BinaryReader.ReadInt32)), // 1131:55
+					new CodeMatch(OpCodes.Stloc_S)); // 1131:56
 
 			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
 
-			if (matcher.Pos != 43)
+			if (matcher.Pos != 56)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
 				return instructions;
 			}
 
 			matcher.
-				InsertAndAdvance(Transpilers.EmitDelegate<Func<int, int>>(MovePlanet.GetNewId));
+				InsertAndAdvance(Transpilers.EmitDelegate<Func<int, int>>(key =>
+				{
+					if (1020000 < key && key < 1020000 + 24000)
+					{
+						return MovePlanet.GetNewId(key - 1020000) + 1020000;
+					}
+					else if (1520000 < key && key < 1520000 + 24000)
+					{
+						return MovePlanet.GetNewId(key - 1520000) + 1520000;
+					}
+					return key;
+				}));
+
+			ins += 1;
+
+			return matcher.InstructionEnumeration();
+		}
+
+		[HarmonyPatch(typeof(GameHistoryData), nameof(GameHistoryData.Export)), HarmonyTranspiler]
+		public static IEnumerable<CodeInstruction> GameHistoryData_Export_Transpiler(IEnumerable<CodeInstruction> instructions)
+		{
+			CodeMatcher matcher = new CodeMatcher(instructions);
+
+			int ins = 0;
+
+			matcher.
+				MatchForward(true,
+					new CodeMatch(OpCodes.Stloc_S),
+					new CodeMatch(OpCodes.Ldarg_1),
+					new CodeMatch(OpCodes.Ldloc_S), // 1067:65
+					new CodeMatch(i => i.opcode == OpCodes.Callvirt && ((MethodInfo)i.operand).Name == nameof(BinaryWriter.Write))); // 1067:66
+
+			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
+
+			if (matcher.Pos != 66)
+			{
+				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				return instructions;
+			}
+
+			matcher.
+				InsertAndAdvance(Transpilers.EmitDelegate<Func<int, int>>(key =>
+				{
+					if (1020000 < key && key < 1020000 + 24000)
+					{
+						return MovePlanet.GetOriginalId(key - 1020000) + 1020000;
+					}
+					else if (1520000 < key && key < 1520000 + 24000)
+					{
+						return MovePlanet.GetOriginalId(key - 1520000) + 1520000;
+					}
+					return key;
+				}));
 
 			ins += 1;
 

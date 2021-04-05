@@ -7,7 +7,7 @@ namespace Tanukinomori
 		public static float WindowWidth = 400f;
 		public static float WindowHeight = 480f;
 
-		public static bool Show = false;
+		public static bool[] Show = { false, false };
 		public static Rect Rect = new Rect(0f, 0f, WindowWidth, WindowHeight);
 
 		private static float lastCheckWindowLeft = float.MinValue;
@@ -122,7 +122,7 @@ namespace Tanukinomori
 			if (GUILayout.Button("Close", closeButtonStyle))
 			{
 				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
-				Show = false;
+				Show[MovePlanetMainUI.wIdx] = false;
 			}
 
 			GUILayout.EndHorizontal();

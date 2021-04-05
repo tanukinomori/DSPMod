@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using rail;
 using System.Linq;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace Tanukinomori
 		public static float WindowWidth = 400f;
 		public static float WindowHeight = 480f;
 
-		public static bool Show = false;
+		public static bool[] Show = { false, false };
 		public static Rect Rect = new Rect(0f, 0f, WindowWidth, WindowHeight);
 		public static int ListSelected = 0;
 
@@ -146,7 +147,9 @@ namespace Tanukinomori
 					var originalStar = GameMain.galaxy.StarById(originalId / 100);
 					float textHeight;
 
-					var satelliteCount = planet.star.planets.Where(p => p.orbitAroundPlanet != null && p.orbitAroundPlanet.id == planet.id).Count();
+					var satellites = planet.star.planets.Where(p => p.orbitAroundPlanet != null && p.orbitAroundPlanet.id == planet.id);
+					var satelliteCount = satellites.Count();
+					var factoryCount = satellites.AddItem(planet).Where(p => p.factory != null).Count();
 
 					var text = originalStar.displayName + " - " + planet.displayName + (satelliteCount > 0 ? $" (+{satelliteCount})" : "");
 					GUILayout.Label(text, nameLabelStyle);
@@ -214,7 +217,9 @@ namespace Tanukinomori
 					var toStar = GameMain.galaxy.StarById(toStarId);
 					float textHeight;
 
-					var satelliteCount = planet.star.planets.Where(p => p.orbitAroundPlanet != null && p.orbitAroundPlanet.id == planet.id).Count();
+					var satellites = planet.star.planets.Where(p => p.orbitAroundPlanet != null && p.orbitAroundPlanet.id == planet.id);
+					var satelliteCount = satellites.Count();
+					var factoryCount = satellites.AddItem(planet).Where(p => p.factory != null).Count();
 
 					var text = fromStar.displayName + " - " + planet.displayName + (satelliteCount > 0 ? $" (+{satelliteCount})" : "") + " > " + toStar.displayName;
 					GUILayout.Label(text, nameLabelStyle);
@@ -254,7 +259,7 @@ namespace Tanukinomori
 			if (GUILayout.Button("Close", buttonStyle))
 			{
 				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
-				Show = false;
+				Show[MovePlanetMainUI.wIdx] = false;
 			}
 
 			GUILayout.EndHorizontal();
