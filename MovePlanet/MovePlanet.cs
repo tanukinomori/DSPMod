@@ -11,7 +11,7 @@ namespace Tanukinomori
 	{
 		public const string ModGuid = "tanu.MovePlanet";
 		public const string ModName = "MovePlanet";
-		public const string ModVersion = "0.0.2";
+		public const string ModVersion = "0.0.3";
 
 		public static bool ConfigEnable = true;
 		public static bool SessionEnable = false;
@@ -32,6 +32,7 @@ namespace Tanukinomori
 			harmony.PatchAll(typeof(Patch_ImportExport));
 			harmony.PatchAll(typeof(Patch_StationComponent));
 			harmony.PatchAll(typeof(Patch_DysonSphere));
+			harmony.PatchAll(typeof(Patch_PlanetAlgorithm));
 			harmony.PatchAll(typeof(Patch_UILoadGameWindow));
 		}
 
@@ -175,6 +176,15 @@ namespace Tanukinomori
 				return newId;
 			}
 			return id;
+		}
+
+		public static StarData GetOriginalStar(PlanetData planet)
+		{
+			if (!MovePlanet.SessionEnable)
+			{
+				return planet.star;
+			}
+			return GameMain.galaxy.StarById(GetOriginalId(planet.id) / 100);
 		}
 
 		public void OnGUI()

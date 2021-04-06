@@ -71,6 +71,7 @@
     <Compile Include="Patch\Patch_DysonSphere.cs" />
     <Compile Include="Patch\Patch_ImportExport.cs" />
     <Compile Include="Patch\Patch_GameMain.cs" />
+    <Compile Include="Patch\Patch_PlanetAlgorithm.cs" />
     <Compile Include="Patch\Patch_StationComponent.cs" />
     <Compile Include="Patch\Patch_UILoadGameWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -84,7 +85,7 @@
     <PostBuildEvent>set BEPINEX_PATH=C:\Users\tanu\AppData\Roaming\r2modmanPlus-local\DysonSphereProgram\profiles\Default\BepInEx
 del %25BEPINEX_PATH%25\plugins\$(TargetFileName)
 del %25BEPINEX_PATH%25\scripts\$(TargetFileName)
-copy /y $(TargetPath) %25BEPINEX_PATH%25\scripts
+copy /y $(TargetPath) %25BEPINEX_PATH%25\plugins
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
