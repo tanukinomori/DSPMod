@@ -9,7 +9,11 @@ namespace Tanukinomori
 {
 	public abstract class ConfigManager
 	{
-		public enum Step { AWAKE, GAME_MAIN_BEGIN, UNIVERSE_GEN_CREATE_GALAXY, STATE }
+		public enum Step {
+			AWAKE,
+			GAME_MAIN_BEGIN,
+			UNIVERSE_GEN_CREATE_GALAXY,
+			STATE }
 
 		private static ConfigManager instance = null;
 

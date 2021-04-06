@@ -16,7 +16,7 @@ namespace Tanukinomori
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
-		private static long nextCheckGameTick = long.MaxValue;
+		public static long NextCheckGameTick = long.MaxValue;
 
 		private static Vector2[] scrollPos = { Vector2.zero, Vector2.zero, Vector2.zero };
 
@@ -54,17 +54,17 @@ namespace Tanukinomori
 			{
 				if (Rect.x != lastCheckWindowLeft || Rect.y != lastCheckWindowTop)
 				{
-					nextCheckGameTick = GameMain.gameTick + 300;
+					NextCheckGameTick = GameMain.gameTick + 300;
 				}
 			}
 
 			lastCheckWindowLeft = Rect.x;
 			lastCheckWindowTop = Rect.y;
 
-			if (nextCheckGameTick <= GameMain.gameTick)
+			if (NextCheckGameTick <= GameMain.gameTick)
 			{
 				ConfigManager.CheckConfig(ConfigManager.Step.STATE);
-				nextCheckGameTick = long.MaxValue;
+				NextCheckGameTick = long.MaxValue;
 			}
 		}
 
@@ -89,7 +89,7 @@ namespace Tanukinomori
 			if (selected != ListSelected)
 			{
 				ListSelected = selected;
-				nextCheckGameTick = GameMain.gameTick + 300;
+				NextCheckGameTick = GameMain.gameTick + 300;
 			}
 
 			var movePlanetTitleLabelStyle = new GUIStyle(GUI.skin.label);

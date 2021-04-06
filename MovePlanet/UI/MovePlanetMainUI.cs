@@ -18,7 +18,7 @@ namespace Tanukinomori
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
-		private static long nextCheckGameTick = long.MaxValue;
+		public static long NextCheckGameTick = long.MaxValue;
 
 		public static void OnGUI()
 		{
@@ -51,17 +51,17 @@ namespace Tanukinomori
 			{
 				if (Rect[wIdx].x != lastCheckWindowLeft || Rect[wIdx].y != lastCheckWindowTop)
 				{
-					nextCheckGameTick = GameMain.gameTick + 300;
+					NextCheckGameTick = GameMain.gameTick + 300;
 				}
 			}
 
 			lastCheckWindowLeft = Rect[wIdx].x;
 			lastCheckWindowTop = Rect[wIdx].y;
 
-			if (nextCheckGameTick <= GameMain.gameTick)
+			if (NextCheckGameTick <= GameMain.gameTick)
 			{
 				ConfigManager.CheckConfig(ConfigManager.Step.STATE);
-				nextCheckGameTick = long.MaxValue;
+				NextCheckGameTick = long.MaxValue;
 			}
 		}
 
@@ -97,17 +97,14 @@ namespace Tanukinomori
 
 				GUILayout.BeginVertical();
 
-				if (GUILayout.Button(wIdx != 1 ? "Config" : "-", buttonStyle))
+				if (GUILayout.Button("Config", buttonStyle))
 				{
 					VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
 
-					if (wIdx != 1)
+					MovePlanetConfigUI.Show[wIdx] ^= true;
+					if (MovePlanetConfigUI.Show[wIdx])
 					{
-						MovePlanetConfigUI.Show[wIdx] ^= true;
-						if (MovePlanetConfigUI.Show[wIdx])
-						{
-							MovePlanetConfigUI.TempScale = MovePlanetMainUI.Scale;
-						}
+						MovePlanetConfigUI.TempScale = MovePlanetMainUI.Scale;
 					}
 				}
 
@@ -115,7 +112,7 @@ namespace Tanukinomori
 				{
 					VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
 					MovePlanet.ConfigEnable ^= true;
-					ConfigManager.CheckConfig(ConfigManager.Step.STATE);
+					NextCheckGameTick = GameMain.gameTick + 300;
 				}
 
 				GUILayout.EndVertical();

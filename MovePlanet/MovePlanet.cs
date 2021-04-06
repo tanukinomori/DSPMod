@@ -11,10 +11,12 @@ namespace Tanukinomori
 	{
 		public const string ModGuid = "tanu.MovePlanet";
 		public const string ModName = "MovePlanet";
-		public const string ModVersion = "0.0.3";
+		public const string ModVersion = "0.0.5";
 
 		public static bool ConfigEnable = true;
 		public static bool SessionEnable = false;
+		public static bool LoadWarperFlag = true;
+		public static int Seed = -1;
 		public static bool LoadGameWindowActive = false;
 
 		public static List<Tuple<int, int>> PlanetStarMapping = new List<Tuple<int, int>>();
@@ -29,6 +31,7 @@ namespace Tanukinomori
 			ConfigManager.CheckConfig(ConfigManager.Step.AWAKE);
 			var harmony = new Harmony($"{ModGuid}.Patch");
 			harmony.PatchAll(typeof(Patch_GameMain));
+			harmony.PatchAll(typeof(Patch_UniverseGen));
 			harmony.PatchAll(typeof(Patch_ImportExport));
 			harmony.PatchAll(typeof(Patch_StationComponent));
 			harmony.PatchAll(typeof(Patch_DysonSphere));
@@ -36,10 +39,10 @@ namespace Tanukinomori
 			harmony.PatchAll(typeof(Patch_UILoadGameWindow));
 		}
 
-		public static void MovePlanetToStar(int targetPlanetId, int toStarId)
+		public static void MovePlanetToStar(GalaxyData galaxy, int targetPlanetId, int toStarId)
 		{
-			var planet = GameMain.galaxy.PlanetById(targetPlanetId);
-			var toStar = GameMain.galaxy.StarById(toStarId);
+			var planet = galaxy.PlanetById(targetPlanetId);
+			var toStar = galaxy.StarById(toStarId);
 			var fromStar = planet.star;
 
 			if (planet.orbitAroundPlanet != null)
@@ -81,8 +84,8 @@ namespace Tanukinomori
 				var newId = toStar.id * 100 + p.index + 1;
 				p.id = newId;
 				AddNewOldId(newId, oldId);
-				GameMain.galaxy.astroPoses[newId].uRadius = p.realRadius;
-				GameMain.galaxy.astroPoses[oldId].uRadius = 0f;
+				galaxy.astroPoses[newId].uRadius = p.realRadius;
+				galaxy.astroPoses[oldId].uRadius = 0f;
 			}
 
 			toStar.planets = toPlanetList.ToArray();
@@ -102,8 +105,8 @@ namespace Tanukinomori
 				{
 					p.id = newId;
 					AddNewOldId(newId, oldId);
-					GameMain.galaxy.astroPoses[newId].uRadius = p.realRadius;
-					GameMain.galaxy.astroPoses[oldId].uRadius = 0f;
+					galaxy.astroPoses[newId].uRadius = p.realRadius;
+					galaxy.astroPoses[oldId].uRadius = 0f;
 				}
 				if (p.orbitAroundPlanet == null)
 				{
@@ -237,7 +240,7 @@ namespace Tanukinomori
 
 				if (!resetInputFlag && MovePlanetConfigUI.Show[MovePlanetMainUI.wIdx])
 				{
-					resetInputFlag = ResetInput(MovePlanetConfigUI.Rect, scale);
+					resetInputFlag = ResetInput(MovePlanetConfigUI.Rect[MovePlanetMainUI.wIdx], scale);
 				}
 			}
 		}

@@ -10,57 +10,6 @@ namespace Tanukinomori
 {
 	class Patch_ImportExport
 	{
-		[HarmonyPatch(typeof(GameData), nameof(GameData.Import)), HarmonyTranspiler]
-		public static IEnumerable<CodeInstruction> GameData_Import_Transpiler(IEnumerable<CodeInstruction> instructions)
-		{
-			CodeMatcher matcher = new CodeMatcher(instructions);
-
-			int ins = 0;
-
-			matcher.
-				MatchForward(true,
-					new CodeMatch(OpCodes.Ldarg_0),
-					new CodeMatch(OpCodes.Ldarg_0),
-					new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == nameof(GameData.gameDesc)),
-					new CodeMatch(i => i.opcode == OpCodes.Call && ((MethodInfo)i.operand).Name == nameof(UniverseGen.CreateGalaxy)),
-					new CodeMatch(i => i.opcode == OpCodes.Stfld && ((FieldInfo)i.operand).Name == nameof(GameData.galaxy)), // 715:55
-					new CodeMatch(OpCodes.Ldarg_0)); // 716:56
-
-			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
-
-			if (matcher.Pos != 56)
-			{
-				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
-				return instructions;
-			}
-
-			matcher.
-				InsertAndAdvance(Transpilers.EmitDelegate<Action>(() =>
-				{
-					ConfigManager.CheckConfig(ConfigManager.Step.UNIVERSE_GEN_CREATE_GALAXY);
-
-					MovePlanet.NewOldIdMap.Clear();
-					MovePlanet.OldNewIdMap.Clear();
-					MovePlanet.SessionEnable = false;
-
-					if (DSPGame.IsMenuDemo || !MovePlanet.ConfigEnable || MovePlanet.PlanetStarMapping.Count == 0)
-					{
-						return;
-					}
-
-					MovePlanet.PlanetStarMapping.OrderByDescending(tuple => tuple.v1).Do(tuple =>
-					{
-						MovePlanet.MovePlanetToStar(tuple.v1, tuple.v2);
-					});
-
-					MovePlanet.SessionEnable = true;
-				}));
-
-			ins += 1;
-
-			return matcher.InstructionEnumeration();
-		}
-
 		[HarmonyPatch(typeof(PlanetFactory), nameof(PlanetFactory.Import)), HarmonyTranspiler]
 		public static IEnumerable<CodeInstruction> PlanetFactory_Import_Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
@@ -222,6 +171,33 @@ namespace Tanukinomori
 
 			matcher.
 				InsertAndAdvance(Transpilers.EmitDelegate<Func<int, int>>(MovePlanet.GetNewId));
+
+			ins += 1;
+
+			matcher.
+				MatchForward(true,
+					new CodeMatch(OpCodes.Ldarg_0),
+					new CodeMatch(OpCodes.Ldarg_1),
+					new CodeMatch(i => i.opcode == OpCodes.Callvirt && ((MethodInfo)i.operand).Name == nameof(BinaryReader.ReadInt32)), // 55:157
+					new CodeMatch(i => i.opcode == OpCodes.Stfld && ((FieldInfo)i.operand).Name == nameof(ShipData.warperCnt))); // 55:158
+
+			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
+
+			if (matcher.Pos != 158 + ins)
+			{
+				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				return instructions;
+			}
+
+			matcher.
+				InsertAndAdvance(Transpilers.EmitDelegate<Func<int, int>>(warperCnt =>
+				{
+					if (MovePlanet.LoadWarperFlag)
+					{
+						return 2;
+					}
+					return warperCnt;
+				}));
 
 			ins += 1;
 
@@ -413,7 +389,7 @@ namespace Tanukinomori
 
 			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
 
-			if (matcher.Pos != 43)
+			if (matcher.Pos != 43 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
 				return instructions;
@@ -441,7 +417,7 @@ namespace Tanukinomori
 
 			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
 
-			if (matcher.Pos != 40)
+			if (matcher.Pos != 40 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
 				return instructions;
@@ -478,7 +454,7 @@ namespace Tanukinomori
 
 			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
 
-			if (matcher.Pos != 56)
+			if (matcher.Pos != 56 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
 				return instructions;
@@ -519,7 +495,7 @@ namespace Tanukinomori
 
 			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
 
-			if (matcher.Pos != 66)
+			if (matcher.Pos != 66 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
 				return instructions;

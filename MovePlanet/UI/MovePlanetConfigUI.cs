@@ -4,60 +4,66 @@ namespace Tanukinomori
 {
 	public class MovePlanetConfigUI
 	{
+		private static int wIdx = 0;
+
 		public static float WindowWidth = 400f;
 		public static float WindowHeight = 480f;
 
 		public static bool[] Show = { false, false };
-		public static Rect Rect = new Rect(0f, 0f, WindowWidth, WindowHeight);
+		public static Rect[] Rect = {
+			new Rect(0f, 0f, WindowWidth, WindowHeight),
+			new Rect(0f, 0f, WindowWidth, WindowHeight) };
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
-		private static long nextCheckGameTick = long.MaxValue;
+		public static long NextCheckGameTick = long.MaxValue;
 
 		public static float TempScale = 150.0f;
 
 		public static void OnGUI()
 		{
+			wIdx = MovePlanetMainUI.wIdx;
+
 			var windowStyle = new GUIStyle(GUI.skin.window);
 			windowStyle.fontSize = 11;
 
-			Rect = GUILayout.Window(99502253, Rect, WindowFunction, "MovePlanet - Config", windowStyle);
+			Rect[wIdx] = GUILayout.Window(99502253, Rect[wIdx], WindowFunction, "MovePlanet - Config", windowStyle);
 
 			var scale = MovePlanetMainUI.Scale / 100.0f;
 
-			if (Screen.width / scale < Rect.xMax)
+			if (Screen.width / scale < Rect[wIdx].xMax)
 			{
-				Rect.x = Screen.width / scale - Rect.width;
+				Rect[wIdx].x = Screen.width / scale - Rect[wIdx].width;
 			}
-			if (Rect.x < 0)
+			if (Rect[wIdx].x < 0)
 			{
-				Rect.x = 0;
+				Rect[wIdx].x = 0;
 			}
 
-			if (Screen.height / scale < Rect.yMax)
+			if (Screen.height / scale < Rect[wIdx].yMax)
 			{
-				Rect.y = Screen.height / scale - Rect.height;
+				Rect[wIdx].y = Screen.height / scale - Rect[wIdx].height;
 			}
-			if (Rect.y < 0)
+			if (Rect[wIdx].y < 0)
 			{
-				Rect.y = 0;
+				Rect[wIdx].y = 0;
 			}
 
 			if (lastCheckWindowLeft != float.MinValue)
 			{
-				if (Rect.x != lastCheckWindowLeft || Rect.y != lastCheckWindowTop)
+				if (Rect[wIdx].x != lastCheckWindowLeft || Rect[wIdx].y != lastCheckWindowTop)
 				{
-					nextCheckGameTick = GameMain.gameTick + 300;
+					NextCheckGameTick = GameMain.gameTick + 300;
 				}
 			}
 
-			lastCheckWindowLeft = Rect.x;
-			lastCheckWindowTop = Rect.y;
+			lastCheckWindowLeft = Rect[wIdx].x;
+			lastCheckWindowTop = Rect[wIdx].y;
 
-			if (nextCheckGameTick <= GameMain.gameTick)
+			if (NextCheckGameTick <= GameMain.gameTick)
 			{
 				ConfigManager.CheckConfig(ConfigManager.Step.STATE);
-				nextCheckGameTick = long.MaxValue;
+				NextCheckGameTick = long.MaxValue;
 			}
 		}
 
@@ -103,10 +109,22 @@ namespace Tanukinomori
 			{
 				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
 				MovePlanetMainUI.Scale = TempScale;
-				nextCheckGameTick = GameMain.gameTick + 300;
+				NextCheckGameTick = GameMain.gameTick + 300;
 			}
 
-			GUILayout.EndVertical();
+			GUILayout.EndHorizontal();
+
+			var toggleStyle = new GUIStyle(GUI.skin.toggle);
+			toggleStyle.fixedHeight = 20;
+			toggleStyle.fontSize = 12;
+
+			GUI.changed = false;
+			MovePlanet.LoadWarperFlag = GUILayout.Toggle(MovePlanet.LoadWarperFlag, "Load the warper onto a moving Logistics vessel during a Load Game.", toggleStyle);
+			if (GUI.changed)
+			{
+				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+				NextCheckGameTick = GameMain.gameTick + 300;
+			}
 
 			GUILayout.FlexibleSpace();
 

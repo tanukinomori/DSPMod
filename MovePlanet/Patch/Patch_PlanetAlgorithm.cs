@@ -31,7 +31,7 @@ namespace Tanukinomori
 
 				//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
 
-				if (matcher.Pos != pos)
+				if (matcher.Pos != pos + ins)
 				{
 					LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
 					return instructions;
@@ -67,7 +67,7 @@ namespace Tanukinomori
 
 				//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
 
-				if (matcher.Pos != pos)
+				if (matcher.Pos != pos + ins)
 				{
 					LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
 					return instructions;

@@ -29,7 +29,7 @@ namespace Tanukinomori
 
 			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
 
-			if (matcher.Pos != 184)
+			if (matcher.Pos != 184 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
 				return instructions;
