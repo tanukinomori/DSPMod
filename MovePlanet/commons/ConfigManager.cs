@@ -9,11 +9,13 @@ namespace Tanukinomori
 {
 	public abstract class ConfigManager
 	{
-		public enum Step {
+		public enum Step
+		{
 			AWAKE,
 			GAME_MAIN_BEGIN,
 			UNIVERSE_GEN_CREATE_GALAXY,
-			STATE }
+			STATE
+		}
 
 		private static ConfigManager instance = null;
 
@@ -42,11 +44,22 @@ namespace Tanukinomori
 		public static ConfigEntry<T> Bind<T>(string section, string key, T defaultValue, string description) =>
 			Config.Bind<T>(section, key, defaultValue, description);
 
-		public static ConfigEntry<T> GetEntry<T>(ConfigDefinition configDefinition) =>
-			(ConfigEntry<T>)Config[configDefinition];
+		public static ConfigEntry<T> GetEntry<T>(ConfigDefinition configDefinition)
+		{
+			try
+			{
+				return (ConfigEntry<T>)Config[configDefinition];
+			}
+			catch (KeyNotFoundException e)
+			{
+				LogManager.LogError($"{e.GetType()}: configDefinition={configDefinition}");
+				MovePlanet.ErrorFlag = true;
+				throw;
+			}
+		}
 
 		public static ConfigEntry<T> GetEntry<T>(string section, string key) =>
-			(ConfigEntry<T>)Config[section, key];
+			GetEntry<T>(new ConfigDefinition(section, key));
 
 		public static T GetValue<T>(ConfigDefinition configDefinition) =>
 			GetEntry<T>(configDefinition).Value;

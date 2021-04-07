@@ -1,12 +1,8 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using UnityEngine;
 
 namespace Tanukinomori
 {
@@ -32,11 +28,12 @@ namespace Tanukinomori
 			if (matcher.Pos != 184 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
 			matcher.
-				SetAndAdvance(OpCodes.Call ,Transpilers.EmitDelegate<Func<StarData, PlanetData>>(
+				SetAndAdvance(OpCodes.Call, Transpilers.EmitDelegate<Func<StarData, PlanetData>>(
 					star =>
 					{
 						return GameMain.galaxy.PlanetById(MovePlanet.GetNewId(star.id * 100 + 1));

@@ -1,10 +1,8 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
 
 namespace Tanukinomori
 {
@@ -34,6 +32,7 @@ namespace Tanukinomori
 				if (matcher.Pos != pos + ins)
 				{
 					LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+					MovePlanet.ErrorFlag = true;
 					return instructions;
 				}
 
@@ -70,6 +69,7 @@ namespace Tanukinomori
 				if (matcher.Pos != pos + ins)
 				{
 					LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+					MovePlanet.ErrorFlag = true;
 					return instructions;
 				}
 

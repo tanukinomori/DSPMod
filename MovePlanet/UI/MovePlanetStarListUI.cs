@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using rail;
 using System.Linq;
 using UnityEngine;
 
@@ -16,7 +15,6 @@ namespace Tanukinomori
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
-		public static long NextCheckGameTick = long.MaxValue;
 
 		private static Vector2[] scrollPos = { Vector2.zero, Vector2.zero, Vector2.zero };
 
@@ -54,18 +52,12 @@ namespace Tanukinomori
 			{
 				if (Rect.x != lastCheckWindowLeft || Rect.y != lastCheckWindowTop)
 				{
-					NextCheckGameTick = GameMain.gameTick + 300;
+					MovePlanetMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 				}
 			}
 
 			lastCheckWindowLeft = Rect.x;
 			lastCheckWindowTop = Rect.y;
-
-			if (NextCheckGameTick <= GameMain.gameTick)
-			{
-				ConfigManager.CheckConfig(ConfigManager.Step.STATE);
-				NextCheckGameTick = long.MaxValue;
-			}
 		}
 
 		public static void WindowFunction(int windowId)
@@ -89,7 +81,7 @@ namespace Tanukinomori
 			if (selected != ListSelected)
 			{
 				ListSelected = selected;
-				NextCheckGameTick = GameMain.gameTick + 300;
+				MovePlanetMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 			}
 
 			var movePlanetTitleLabelStyle = new GUIStyle(GUI.skin.label);

@@ -74,7 +74,6 @@
     <Compile Include="Patch\Patch_PlanetAlgorithm.cs" />
     <Compile Include="Patch\Patch_StationComponent.cs" />
     <Compile Include="Patch\Patch_UILoadGameWindow.cs" />
-    <Compile Include="Patch\Patch_UniverseGen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\MovePlanetDebugUI.cs" />
     <Compile Include="UI\MovePlanetConfigUI.cs" />

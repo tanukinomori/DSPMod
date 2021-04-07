@@ -1,8 +1,6 @@
 ﻿using BepInEx.Configuration;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 
 namespace Tanukinomori
 {
@@ -31,6 +29,7 @@ namespace Tanukinomori
 			{
 				MovePlanet.ConfigEnable = Bind("Setting", "Enable", true).Value;
 
+				MovePlanet.MovePlayerFlag = Bind("Setting", "MovePlayer", true).Value;
 				MovePlanet.LoadWarperFlag = Bind("Setting", "LoadWarper", true).Value;
 
 				MovePlanetMainUI.Scale = (float)Bind("Setting", "UIScale", 150).Value;
@@ -46,10 +45,10 @@ namespace Tanukinomori
 				MovePlanetStarListUI.Rect.x = (float)Bind("State", "StarListWindowLeft", 100).Value;
 				MovePlanetStarListUI.Rect.y = (float)Bind("State", "StarListWindowTop", 100).Value;
 
-				if (!DSPGame.IsMenuDemo && MovePlanet.Seed != -1)
+				if (!DSPGame.IsMenuDemo && GameMain.galaxy != null)
 				{
 					MovePlanet.PlanetStarMapping =
-						ListUtils.ParseToStringList(Bind("Save", $"Mapping_{MovePlanet.Seed}", "").Value).
+						ListUtils.ParseToStringList(Bind("Save", $"Mapping_{GameMain.galaxy.seed}", "").Value).
 						Select(str =>
 						{
 							var array = str.Split('-');
@@ -63,8 +62,11 @@ namespace Tanukinomori
 			}
 			else if (step == Step.STATE)
 			{
+				LogManager.LogInfo("check state.");
+
 				saveFlag |= UpdateEntry("Setting", "Enable", MovePlanet.ConfigEnable);
 
+				saveFlag |= UpdateEntry("Setting", "MovePlayer", MovePlanet.MovePlayerFlag);
 				saveFlag |= UpdateEntry("Setting", "LoadWarper", MovePlanet.LoadWarperFlag);
 
 				saveFlag |= UpdateEntry("Setting", "UIScale", (int)MovePlanetMainUI.Scale);
@@ -80,10 +82,12 @@ namespace Tanukinomori
 				saveFlag |= UpdateEntry("State", "StarListWindowLeft", (int)MovePlanetStarListUI.Rect.x);
 				saveFlag |= UpdateEntry("State", "StarListWindowTop", (int)MovePlanetStarListUI.Rect.y);
 
-				if (!DSPGame.IsMenuDemo && MovePlanet.Seed != -1)
+				if (!DSPGame.IsMenuDemo && GameMain.galaxy != null)
 				{
-					saveFlag |= UpdateEntry("Save", $"Mapping_{MovePlanet.Seed}", ListUtils.ToString(MovePlanet.PlanetStarMapping.Select(tuple => $"{tuple.v1}-{tuple.v2}").ToList()));
+					saveFlag |= UpdateEntry("Save", $"Mapping_{GameMain.galaxy.seed}", ListUtils.ToString(MovePlanet.PlanetStarMapping.Select(tuple => $"{tuple.v1}-{tuple.v2}").ToList()));
 				}
+
+				MovePlanetMainUI.NextCheckGameTick = long.MaxValue;
 			}
 			if (saveFlag)
 			{

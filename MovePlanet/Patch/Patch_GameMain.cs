@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System.Reflection;
 
 namespace Tanukinomori
 {
@@ -8,6 +9,8 @@ namespace Tanukinomori
 		[HarmonyPatch(nameof(GameMain.Pause)), HarmonyPostfix]
 		public static void Pause_Postfix()
 		{
+			//LogManager.LogInfo(MethodBase.GetCurrentMethod());
+
 			ConfigManager.CheckConfig(ConfigManager.Step.STATE);
 		}
 	}

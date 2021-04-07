@@ -61,7 +61,6 @@ namespace Tanukinomori
 			if (NextCheckGameTick <= GameMain.gameTick)
 			{
 				ConfigManager.CheckConfig(ConfigManager.Step.STATE);
-				NextCheckGameTick = long.MaxValue;
 			}
 		}
 

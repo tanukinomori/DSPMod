@@ -21,6 +21,7 @@ namespace Tanukinomori
 			if (codes[2373].opcode != OpCodes.Ldc_I4_S)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -30,6 +31,7 @@ namespace Tanukinomori
 			if (codes[2473].opcode != OpCodes.Ldc_I4_S)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 

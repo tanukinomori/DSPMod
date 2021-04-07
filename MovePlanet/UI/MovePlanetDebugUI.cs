@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Tanukinomori
 {
@@ -75,7 +74,7 @@ namespace Tanukinomori
 			if (uiGame != null)
 			{
 
-//				GUILayout.Label($"uiGame.guideComplete={uiGame.guideComplete}", labelStyle);
+				//GUILayout.Label($"uiGame.guideComplete={uiGame.guideComplete}", labelStyle);
 
 				GUILayout.Label($"uiGame.techTree.active={uiGame.techTree.active}", labelStyle);
 				GUILayout.Label($"uiGame.escMenu.active={uiGame.escMenu.active}", labelStyle);

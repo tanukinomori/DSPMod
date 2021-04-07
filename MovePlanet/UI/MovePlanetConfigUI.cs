@@ -7,7 +7,7 @@ namespace Tanukinomori
 		private static int wIdx = 0;
 
 		public static float WindowWidth = 400f;
-		public static float WindowHeight = 480f;
+		public static float WindowHeight = 300f;
 
 		public static bool[] Show = { false, false };
 		public static Rect[] Rect = {
@@ -16,7 +16,6 @@ namespace Tanukinomori
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
-		public static long NextCheckGameTick = long.MaxValue;
 
 		public static float TempScale = 150.0f;
 
@@ -53,18 +52,12 @@ namespace Tanukinomori
 			{
 				if (Rect[wIdx].x != lastCheckWindowLeft || Rect[wIdx].y != lastCheckWindowTop)
 				{
-					NextCheckGameTick = GameMain.gameTick + 300;
+					MovePlanetMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 				}
 			}
 
 			lastCheckWindowLeft = Rect[wIdx].x;
 			lastCheckWindowTop = Rect[wIdx].y;
-
-			if (NextCheckGameTick <= GameMain.gameTick)
-			{
-				ConfigManager.CheckConfig(ConfigManager.Step.STATE);
-				NextCheckGameTick = long.MaxValue;
-			}
 		}
 
 		public static void WindowFunction(int windowId)
@@ -109,21 +102,31 @@ namespace Tanukinomori
 			{
 				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
 				MovePlanetMainUI.Scale = TempScale;
-				NextCheckGameTick = GameMain.gameTick + 300;
+				MovePlanetMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 			}
 
 			GUILayout.EndHorizontal();
 
-			var toggleStyle = new GUIStyle(GUI.skin.toggle);
-			toggleStyle.fixedHeight = 20;
-			toggleStyle.fontSize = 12;
+			var nToggleStyle = new GUIStyle(GUI.skin.toggle);
+			nToggleStyle.fixedHeight = 16;
+			nToggleStyle.fontSize = 12;
+			var hToggleStyle = new GUIStyle(nToggleStyle);
+			hToggleStyle.fixedHeight = 32;
 
 			GUI.changed = false;
-			MovePlanet.LoadWarperFlag = GUILayout.Toggle(MovePlanet.LoadWarperFlag, "Load the warper onto a moving Logistics vessel during a Load Game.", toggleStyle);
+			MovePlanet.MovePlayerFlag = GUILayout.Toggle(MovePlanet.MovePlayerFlag, " If player in space when Load Game,\n move to first planet.", hToggleStyle);
 			if (GUI.changed)
 			{
 				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
-				NextCheckGameTick = GameMain.gameTick + 300;
+				MovePlanetMainUI.NextCheckGameTick = GameMain.gameTick + 300;
+			}
+
+			GUI.changed = false;
+			MovePlanet.LoadWarperFlag = GUILayout.Toggle(MovePlanet.LoadWarperFlag, " Warp the Logistics vessel when Load Game.", nToggleStyle);
+			if (GUI.changed)
+			{
+				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+				MovePlanetMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 			}
 
 			GUILayout.FlexibleSpace();

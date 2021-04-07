@@ -10,6 +10,120 @@ namespace Tanukinomori
 {
 	class Patch_ImportExport
 	{
+		[HarmonyPatch(typeof(GameData), nameof(GameData.Import)), HarmonyTranspiler]
+		public static IEnumerable<CodeInstruction> GameData_Import_Transpiler(IEnumerable<CodeInstruction> instructions)
+		{
+			CodeMatcher matcher = new CodeMatcher(instructions);
+
+			int ins = 0;
+
+			matcher.
+				MatchForward(true,
+					new CodeMatch(i => i.opcode == OpCodes.Callvirt && ((MethodInfo)i.operand).Name == nameof(BinaryReader.ReadInt64)),
+					new CodeMatch(i => i.opcode == OpCodes.Call && ((MethodInfo)i.operand).Name == "set_gameTick"), // 714:50
+					new CodeMatch(OpCodes.Ldarg_0)); // 715:51
+
+			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
+
+			if (matcher.Pos != 51 + ins)
+			{
+				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
+				return instructions;
+			}
+
+			matcher.
+				InsertAndAdvance(Transpilers.EmitDelegate<Action>(() =>
+				{
+					MovePlanet.NewOldIdMap.Clear();
+					MovePlanet.OldNewIdMap.Clear();
+					MovePlanet.SessionEnable = false;
+				}));
+
+			ins += 1;
+
+			matcher.
+				MatchForward(true,
+					new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == nameof(GameData.gameDesc)),
+					new CodeMatch(i => i.opcode == OpCodes.Call && ((MethodInfo)i.operand).Name == nameof(UniverseGen.CreateGalaxy)),
+					new CodeMatch(i => i.opcode == OpCodes.Stfld && ((FieldInfo)i.operand).Name == nameof(GameData.galaxy)), // 715:55
+					new CodeMatch(OpCodes.Ldarg_0)); // 716:56
+
+			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
+
+			if (matcher.Pos != 56 + ins)
+			{
+				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
+				return instructions;
+			}
+
+			matcher.
+				InsertAndAdvance(Transpilers.EmitDelegate<Action>(() =>
+				{
+					ConfigManager.CheckConfig(ConfigManager.Step.UNIVERSE_GEN_CREATE_GALAXY);
+
+					if (!MovePlanet.ConfigEnable || MovePlanet.PlanetStarMapping.Count == 0 || MovePlanet.ErrorFlag)
+					{
+						return;
+					}
+
+					MovePlanet.PlanetStarMapping.OrderByDescending(tuple => tuple.v1).Do(tuple =>
+					{
+						MovePlanet.MovePlanetToStar(tuple.v1, tuple.v2);
+					});
+
+					MovePlanet.SessionEnable = true;
+				}));
+
+			ins += 1;
+
+			matcher.
+				MatchForward(true,
+					new CodeMatch(OpCodes.Ldarg_1),
+					new CodeMatch(i => i.opcode == OpCodes.Callvirt && ((MethodInfo)i.operand).Name == nameof(Player.Import)), // 750:153
+					new CodeMatch(OpCodes.Ldarg_0)); // 751:154
+
+			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
+
+			if (matcher.Pos != 154 + ins)
+			{
+				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
+				return instructions;
+			}
+
+			matcher.
+				InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_2)).
+				InsertAndAdvance(Transpilers.EmitDelegate<Func<PlanetData, PlanetData>>(planet =>
+				{
+					if (!DSPGame.IsMenuDemo && MovePlanet.MovePlayerFlag)
+					{
+						if (planet != null)
+						{
+							if ((planet.uPosition - GameMain.mainPlayer.uPosition).magnitude - planet.realRadius < 1000.0)
+							{
+								return planet;
+							}
+						}
+
+						planet = GameMain.galaxy.PlanetById(MovePlanet.GetNewId(GameMain.galaxy.birthPlanetId));
+
+						if ((planet.uPosition - GameMain.mainPlayer.uPosition).magnitude - planet.realRadius > 1000.0)
+						{
+							GameMain.mainPlayer.uPosition = planet.uPosition;
+						}
+					}
+
+					return planet;
+				})).
+				InsertAndAdvance(new CodeInstruction(OpCodes.Stloc_2));
+
+			ins += 1;
+
+			return matcher.InstructionEnumeration();
+		}
+
 		[HarmonyPatch(typeof(PlanetFactory), nameof(PlanetFactory.Import)), HarmonyTranspiler]
 		public static IEnumerable<CodeInstruction> PlanetFactory_Import_Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
@@ -28,6 +142,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 17)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -56,6 +171,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 6)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -86,6 +202,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 18 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -116,6 +233,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 18 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -146,6 +264,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 10 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -166,6 +285,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 14 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -186,13 +306,14 @@ namespace Tanukinomori
 			if (matcher.Pos != 158 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
 			matcher.
 				InsertAndAdvance(Transpilers.EmitDelegate<Func<int, int>>(warperCnt =>
 				{
-					if (MovePlanet.LoadWarperFlag)
+					if (!DSPGame.IsMenuDemo && MovePlanet.LoadWarperFlag)
 					{
 						return 2;
 					}
@@ -223,6 +344,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 10 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -243,6 +365,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 14 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -273,6 +396,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 14 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -303,6 +427,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 14 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -333,6 +458,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 14 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -363,6 +489,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 14 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -392,6 +519,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 43 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -420,6 +548,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 40 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -457,6 +586,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 56 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
@@ -498,6 +628,7 @@ namespace Tanukinomori
 			if (matcher.Pos != 66 + ins)
 			{
 				LogManager.LogError(MethodBase.GetCurrentMethod(), "patch error.");
+				MovePlanet.ErrorFlag = true;
 				return instructions;
 			}
 
