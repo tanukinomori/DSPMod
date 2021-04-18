@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using System.Linq;
 using UnityEngine;
 
 namespace Tanukinomori
@@ -7,7 +6,7 @@ namespace Tanukinomori
 	[HarmonyPatch(typeof(PlayerMove_Sail))]
 	public class Patch_PlayerMoveSail
 	{
-		[HarmonyPatch("GameTick"), HarmonyPrefix]
+		[HarmonyPatch(nameof(PlayerMove_Sail.GameTick)), HarmonyPrefix]
 		public static void GameTick_Prefix(PlayerMove_Sail __instance)
 		{
 			CruiseAssist.State = CruiseAssistState.INACTIVE;

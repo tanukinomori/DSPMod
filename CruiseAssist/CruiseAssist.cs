@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Tanukinomori.Patch;
-using Tanukinomori.UI;
 using UnityEngine;
 
 namespace Tanukinomori
@@ -14,9 +13,10 @@ namespace Tanukinomori
 	{
 		public const string ModGuid = "tanu.CruiseAssist";
 		public const string ModName = "CruiseAssist";
-		public const string ModVersion = "0.0.25";
+		public const string ModVersion = "0.0.26";
 
 		public static bool Enable = true;
+		public static bool MarkVisitedFlag = true;
 		public static bool SelectFocusFlag = false;
 		public static bool HideDuplicateHistoryFlag = true;
 		public static bool AutoDisableLockCursorFlag = false;

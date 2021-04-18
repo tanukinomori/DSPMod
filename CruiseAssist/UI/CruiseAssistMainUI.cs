@@ -1,6 +1,4 @@
-﻿using System;
-using Tanukinomori.UI;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Tanukinomori
 {
@@ -12,10 +10,10 @@ namespace Tanukinomori
 
 		public static CruiseAssistMainUIViewMode ViewMode = CruiseAssistMainUIViewMode.FULL;
 
-		public static float WindowWidthFull = 398f;
-		public static float WindowHeightFull = 150f;
-		public static float WindowWidthMini = 273f;
-		public static float WindowHeightMini = 70f;
+		public const float WindowWidthFull = 398f;
+		public const float WindowHeightFull = 150f;
+		public const float WindowWidthMini = 273f;
+		public const float WindowHeightMini = 70f;
 
 		public static Rect[] Rect = {
 			new Rect(0f, 0f, WindowWidthFull, WindowHeightFull),
@@ -23,7 +21,8 @@ namespace Tanukinomori
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
-		private static long nextCheckGameTick = long.MaxValue;
+
+		public static long NextCheckGameTick = long.MaxValue;
 
 		public static void OnGUI()
 		{
@@ -70,17 +69,17 @@ namespace Tanukinomori
 			{
 				if (Rect[wIdx].x != lastCheckWindowLeft || Rect[wIdx].y != lastCheckWindowTop)
 				{
-					nextCheckGameTick = GameMain.gameTick + 300;
+					NextCheckGameTick = GameMain.gameTick + 300;
 				}
 			}
 
 			lastCheckWindowLeft = Rect[wIdx].x;
 			lastCheckWindowTop = Rect[wIdx].y;
 
-			if (nextCheckGameTick <= GameMain.gameTick)
+			if (NextCheckGameTick <= GameMain.gameTick)
 			{
 				ConfigManager.CheckConfig(ConfigManager.Step.STATE);
-				nextCheckGameTick = long.MaxValue;
+				NextCheckGameTick = long.MaxValue;
 			}
 		}
 
@@ -243,7 +242,7 @@ namespace Tanukinomori
 				{
 					VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
 					CruiseAssist.Enable ^= true;
-					nextCheckGameTick = GameMain.gameTick + 300;
+					NextCheckGameTick = GameMain.gameTick + 300;
 				}
 
 				GUILayout.EndVertical();

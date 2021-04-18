@@ -1,6 +1,4 @@
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -10,8 +8,8 @@ namespace Tanukinomori
 	{
 		private static int wIdx = 0;
 
-		public static float WindowWidth = 400f;
-		public static float WindowHeight = 480f;
+		public const float WindowWidth = 400f;
+		public const float WindowHeight = 480f;
 
 		public static bool[] Show = { false, false };
 		public static Rect[] Rect = {
@@ -22,9 +20,11 @@ namespace Tanukinomori
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
-		private static long nextCheckGameTick = long.MaxValue;
 
 		private static Vector2[] scrollPos = { Vector2.zero, Vector2.zero, Vector2.zero };
+
+		private const string VisitedMark = "● ";
+		private const string NonVisitMark = "";
 
 		public static void OnGUI()
 		{
@@ -59,18 +59,12 @@ namespace Tanukinomori
 			{
 				if (Rect[wIdx].x != lastCheckWindowLeft || Rect[wIdx].y != lastCheckWindowTop)
 				{
-					nextCheckGameTick = GameMain.gameTick + 300;
+					CruiseAssistMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 				}
 			}
 
 			lastCheckWindowLeft = Rect[wIdx].x;
 			lastCheckWindowTop = Rect[wIdx].y;
-
-			if (nextCheckGameTick <= GameMain.gameTick)
-			{
-				ConfigManager.CheckConfig(ConfigManager.Step.STATE);
-				nextCheckGameTick = long.MaxValue;
-			}
 		}
 
 		public static void WindowFunction(int windowId)
@@ -94,7 +88,7 @@ namespace Tanukinomori
 			if (selected != ListSelected)
 			{
 				ListSelected = selected;
-				nextCheckGameTick = GameMain.gameTick + 300;
+				CruiseAssistMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 			}
 
 			GUILayout.EndHorizontal();
@@ -138,18 +132,18 @@ namespace Tanukinomori
 					var star = tuple.v1;
 					var range = tuple.v2;
 					var starName = CruiseAssist.GetStarName(star);
-					StarData star2 = null;
+					bool viewPlanetFlag = false;
 					if (GameMain.localStar != null && star.id == GameMain.localStar.id)
 					{
-						star2 = GameMain.localStar;
+						viewPlanetFlag = true;
 					}
 					else if (CruiseAssist.SelectTargetStar != null && star.id == CruiseAssist.SelectTargetStar.id && GameMain.history.universeObserveLevel >= (range >= 14400000.0 ? 4 : 3))
 					{
-						star2 = star;
+						viewPlanetFlag = true;
 					}
-					if (star2 != null)
+					if (viewPlanetFlag)
 					{
-						star2.planets.
+						star.planets.
 							Select(planet => new Tuple<PlanetData, double>(planet, (planet.uPosition - GameMain.mainPlayer.uPosition).magnitude)).
 							AddItem(new Tuple<PlanetData, double>(null, (star.uPosition - GameMain.mainPlayer.uPosition).magnitude)).
 							OrderBy(tuple2 => tuple2.v2).
@@ -171,6 +165,10 @@ namespace Tanukinomori
 										nRangeLabelStyle.normal.textColor = Color.cyan;
 									}
 									var text = starName;
+									if (CruiseAssist.MarkVisitedFlag)
+									{
+										text = (star.planets.Where(p => p.factory != null).Count() > 0 ? VisitedMark : NonVisitMark) + text;
+									}
 									GUILayout.Label(text, nameLabelStyle);
 									textHeight = nameLabelStyle.CalcHeight(new GUIContent(text), nameLabelStyle.fixedWidth);
 								}
@@ -182,6 +180,10 @@ namespace Tanukinomori
 										nRangeLabelStyle.normal.textColor = Color.cyan;
 									}
 									var text = starName + " - " + CruiseAssist.GetPlanetName(planet);
+									if (CruiseAssist.MarkVisitedFlag)
+									{
+										text = (planet.factory != null ? VisitedMark : NonVisitMark) + text;
+									}
 									GUILayout.Label(text, nameLabelStyle);
 									textHeight = nameLabelStyle.CalcHeight(new GUIContent(text), nameLabelStyle.fixedWidth);
 								}
@@ -214,7 +216,7 @@ namespace Tanukinomori
 											if (CruiseAssist.Bookmark.Count <= 128)
 											{
 												CruiseAssist.Bookmark.Add(planet.id);
-												nextCheckGameTick = GameMain.gameTick + 300;
+												CruiseAssistMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 											}
 										}
 									}
@@ -238,7 +240,11 @@ namespace Tanukinomori
 						}
 
 						var text = starName;
-						GUILayout.Label(starName, nameLabelStyle);
+						if (CruiseAssist.MarkVisitedFlag)
+						{
+							text = (star.planets.Where(p => p.factory != null).Count() > 0 ? VisitedMark : NonVisitMark) + text;
+						}
+						GUILayout.Label(text, nameLabelStyle);
 						textHeight = nameLabelStyle.CalcHeight(new GUIContent(text), nameLabelStyle.fixedWidth);
 
 						GUILayout.FlexibleSpace();
@@ -301,6 +307,10 @@ namespace Tanukinomori
 					GUILayout.BeginHorizontal();
 
 					var text = starName + " - " + CruiseAssist.GetPlanetName(planet);
+					if (CruiseAssist.MarkVisitedFlag)
+					{
+						text = (planet.factory != null ? VisitedMark : NonVisitMark) + text;
+					}
 					GUILayout.Label(text, nameLabelStyle);
 					textHeight = nameLabelStyle.CalcHeight(new GUIContent(text), nameLabelStyle.fixedWidth);
 
@@ -370,7 +380,7 @@ namespace Tanukinomori
 										if (CruiseAssist.Bookmark.Count <= 128)
 										{
 											CruiseAssist.Bookmark.Add(id);
-											nextCheckGameTick = GameMain.gameTick + 300;
+											CruiseAssistMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 										}
 									}
 								}
@@ -386,7 +396,7 @@ namespace Tanukinomori
 									if (listIndex != 0)
 									{
 										CruiseAssist.History.RemoveAt(CruiseAssist.History.Count - 1 - listIndex);
-										nextCheckGameTick = GameMain.gameTick + 300;
+										CruiseAssistMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 									}
 								}
 								else if (ListSelected == 2)
@@ -394,7 +404,7 @@ namespace Tanukinomori
 									// Bookmark(2番目はDEL)のとき
 
 									CruiseAssist.Bookmark.Remove(planet.id);
-									nextCheckGameTick = GameMain.gameTick + 300;
+									CruiseAssistMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 								}
 							}
 						}

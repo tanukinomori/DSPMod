@@ -1,14 +1,13 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Tanukinomori.UI
+namespace Tanukinomori
 {
 	public class CruiseAssistConfigUI
 	{
 		private static int wIdx = 0;
 
-		public static float WindowWidth = 400f;
-		public static float WindowHeight = 400f;
+		public const float WindowWidth = 400f;
+		public const float WindowHeight = 400f;
 
 		public static bool[] Show = { false, false };
 		public static Rect[] Rect = {
@@ -17,7 +16,6 @@ namespace Tanukinomori.UI
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
-		private static long nextCheckGameTick = long.MaxValue;
 
 		public static float TempScale = 150.0f;
 
@@ -54,18 +52,12 @@ namespace Tanukinomori.UI
 			{
 				if (Rect[wIdx].x != lastCheckWindowLeft || Rect[wIdx].y != lastCheckWindowTop)
 				{
-					nextCheckGameTick = GameMain.gameTick + 300;
+					CruiseAssistMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 				}
 			}
 
 			lastCheckWindowLeft = Rect[wIdx].x;
 			lastCheckWindowTop = Rect[wIdx].y;
-
-			if (nextCheckGameTick <= GameMain.gameTick)
-			{
-				ConfigManager.CheckConfig(ConfigManager.Step.STATE);
-				nextCheckGameTick = long.MaxValue;
-			}
 		}
 
 		public static void WindowFunction(int windowId)
@@ -107,7 +99,7 @@ namespace Tanukinomori.UI
 						CruiseAssistMainUI.ViewMode = CruiseAssistMainUIViewMode.MINI;
 						break;
 				}
-				nextCheckGameTick = GameMain.gameTick + 300;
+				CruiseAssistMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 			}
 
 			GUILayout.EndHorizontal();
@@ -150,7 +142,7 @@ namespace Tanukinomori.UI
 			{
 				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
 				CruiseAssistMainUI.Scale = TempScale;
-				nextCheckGameTick = GameMain.gameTick + 300;
+				CruiseAssistMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 			}
 
 			GUILayout.EndHorizontal();
@@ -160,10 +152,19 @@ namespace Tanukinomori.UI
 			toggleStyle.fontSize = 12;
 
 			GUI.changed = false;
+			CruiseAssist.MarkVisitedFlag = GUILayout.Toggle(CruiseAssist.MarkVisitedFlag, "Mark the visited system and planet.", toggleStyle);
+			if (GUI.changed)
+			{
+				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+				CruiseAssistMainUI.NextCheckGameTick = GameMain.gameTick + 300;
+			}
+
+			GUI.changed = false;
 			CruiseAssist.SelectFocusFlag = GUILayout.Toggle(CruiseAssist.SelectFocusFlag, "Focus when target selected.", toggleStyle);
 			if (GUI.changed)
 			{
 				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+				CruiseAssistMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 			}
 
 			GUI.changed = false;
@@ -171,6 +172,7 @@ namespace Tanukinomori.UI
 			if (GUI.changed)
 			{
 				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+				CruiseAssistMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 			}
 
 			GUI.changed = false;
@@ -178,6 +180,7 @@ namespace Tanukinomori.UI
 			if (GUI.changed)
 			{
 				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+				CruiseAssistMainUI.NextCheckGameTick = GameMain.gameTick + 300;
 			}
 
 			GUILayout.FlexibleSpace();

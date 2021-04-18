@@ -1,6 +1,5 @@
 ﻿using BepInEx.Configuration;
-using System.Linq;
-using Tanukinomori.UI;
+using System.Collections.Generic;
 
 namespace Tanukinomori
 {
@@ -58,14 +57,21 @@ namespace Tanukinomori
 				CruiseAssistDebugUI.Rect.x = (float)Bind("State", "DebugWindowLeft", 100).Value;
 				CruiseAssistDebugUI.Rect.y = (float)Bind("State", "DebugWindowTop", 100).Value;
 
-				if (GameMain.galaxy != null)
+				if (!DSPGame.IsMenuDemo && GameMain.galaxy != null)
 				{
 					CruiseAssist.History = ListUtils.ParseToIntList(Bind("Save", $"History_{GameMain.galaxy.seed}", "").Value);
 					CruiseAssist.Bookmark = ListUtils.ParseToIntList(Bind("Save", $"Bookmark_{GameMain.galaxy.seed}", "").Value);
 				}
+				else
+				{
+					CruiseAssist.History = new List<int>();
+					CruiseAssist.Bookmark = new List<int>();
+				}
 			}
 			else if (step == Step.STATE)
 			{
+				LogManager.LogInfo("check state.");
+
 				saveFlag |= UpdateEntry("Setting", "Enable", CruiseAssist.Enable);
 
 				saveFlag |= UpdateEntry("Setting", "SelectFocus", CruiseAssist.SelectFocusFlag);
@@ -91,8 +97,13 @@ namespace Tanukinomori
 				saveFlag |= UpdateEntry("State", "DebugWindowLeft", (int)CruiseAssistDebugUI.Rect.x);
 				saveFlag |= UpdateEntry("State", "DebugWindowTop", (int)CruiseAssistDebugUI.Rect.y);
 
-				saveFlag |= UpdateEntry("Save", $"History_{GameMain.galaxy.seed}", ListUtils.ToString(CruiseAssist.History));
-				saveFlag |= UpdateEntry("Save", $"Bookmark_{GameMain.galaxy.seed}", ListUtils.ToString(CruiseAssist.Bookmark));
+				if (!DSPGame.IsMenuDemo && GameMain.galaxy != null)
+				{
+					saveFlag |= UpdateEntry("Save", $"History_{GameMain.galaxy.seed}", ListUtils.ToString(CruiseAssist.History));
+					saveFlag |= UpdateEntry("Save", $"Bookmark_{GameMain.galaxy.seed}", ListUtils.ToString(CruiseAssist.Bookmark));
+				}
+
+				CruiseAssistMainUI.NextCheckGameTick = long.MaxValue;
 			}
 			if (saveFlag)
 			{
