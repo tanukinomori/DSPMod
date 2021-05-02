@@ -2,7 +2,7 @@ using HarmonyLib;
 using System.Linq;
 using UnityEngine;
 
-namespace Tanukinomori
+namespace tanu.CruiseAssist
 {
 	public class CruiseAssistStarListUI
 	{

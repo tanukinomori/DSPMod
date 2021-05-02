@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace Tanukinomori
+namespace tanu.CruiseAssist
 {
 	[HarmonyPatch(typeof(UITechTree))]
 	public class Patch_UITechTree

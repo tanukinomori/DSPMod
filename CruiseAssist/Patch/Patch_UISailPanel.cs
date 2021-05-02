@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 
-namespace Tanukinomori
+namespace tanu.CruiseAssist
 {
 	[HarmonyPatch(typeof(UISailPanel))]
 	public class Patch_UISailPanel

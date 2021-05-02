@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Tanukinomori
+namespace tanu.CruiseAssist
 {
 	public class EnumUtils
 	{

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Tanukinomori
+namespace tanu.CruiseAssist
 {
 	public class ListUtils
 	{

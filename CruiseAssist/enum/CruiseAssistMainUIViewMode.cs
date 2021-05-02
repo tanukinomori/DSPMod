@@ -1,4 +1,4 @@
-﻿namespace Tanukinomori
+﻿namespace tanu.CruiseAssist
 {
 	public enum CruiseAssistMainUIViewMode
 	{

@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace Tanukinomori
+namespace tanu.CruiseAssist
 {
 	[HarmonyPatch(typeof(GameMain))]
 	public class Patch_GameMain

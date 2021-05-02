@@ -1,7 +1,7 @@
 ﻿using BepInEx.Configuration;
 using System.Collections.Generic;
 
-namespace Tanukinomori
+namespace tanu.CruiseAssist
 {
 	public class CruiseAssistConfigManager : ConfigManager
 	{
@@ -33,6 +33,7 @@ namespace Tanukinomori
 
 				CruiseAssist.Enable = Bind("Setting", "Enable", true).Value;
 
+				CruiseAssist.MarkVisitedFlag = Bind("Setting", "MarkVisited", true).Value;
 				CruiseAssist.SelectFocusFlag = Bind("Setting", "SelectFocus", true).Value;
 				CruiseAssist.HideDuplicateHistoryFlag = Bind("Setting", "HideDuplicateHistory", true).Value;
 				CruiseAssist.AutoDisableLockCursorFlag = Bind("Setting", "AutoDisableLockCursor", false).Value;
@@ -74,6 +75,7 @@ namespace Tanukinomori
 
 				saveFlag |= UpdateEntry("Setting", "Enable", CruiseAssist.Enable);
 
+				saveFlag |= UpdateEntry("Setting", "MarkVisited", CruiseAssist.MarkVisitedFlag);
 				saveFlag |= UpdateEntry("Setting", "SelectFocus", CruiseAssist.SelectFocusFlag);
 				saveFlag |= UpdateEntry("Setting", "HideDuplicateHistory", CruiseAssist.HideDuplicateHistoryFlag);
 				saveFlag |= UpdateEntry("Setting", "AutoDisableLockCursor", CruiseAssist.AutoDisableLockCursorFlag);

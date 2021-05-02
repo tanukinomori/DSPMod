@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace Tanukinomori.Patch
+namespace tanu.CruiseAssist
 {
 	[HarmonyPatch(typeof(UIStarmap))]
 	public class Patch_UIStarmap

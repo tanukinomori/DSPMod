@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 // https://github.com/BepInEx/BepInEx/blob/master/BepInEx.Core/Configuration/ConfigFile.cs
 
-namespace Tanukinomori
+namespace tanu.CruiseAssist
 {
 	public abstract class ConfigManager
 	{
@@ -101,7 +101,7 @@ namespace Tanukinomori
 			}
 		}
 
-		public static void Save(bool clearOrphanedEntries = true)
+		public static void Save(bool clearOrphanedEntries = false)
 		{
 			if (clearOrphanedEntries)
 			{

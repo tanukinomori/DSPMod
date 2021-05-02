@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 
-namespace Tanukinomori
+namespace tanu.CruiseAssist
 {
 	[HarmonyPatch(typeof(PlayerMove_Sail))]
 	public class Patch_PlayerMoveSail

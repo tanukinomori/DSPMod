@@ -3,17 +3,18 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Tanukinomori.Patch;
 using UnityEngine;
 
-namespace Tanukinomori
+// https://docs.unity3d.com/ja/2018.4/Manual/ExecutionOrder.html
+
+namespace tanu.CruiseAssist
 {
 	[BepInPlugin(ModGuid, ModName, ModVersion)]
 	public class CruiseAssist : BaseUnityPlugin
 	{
 		public const string ModGuid = "tanu.CruiseAssist";
 		public const string ModName = "CruiseAssist";
-		public const string ModVersion = "0.0.26";
+		public const string ModVersion = "0.0.27";
 
 		public static bool Enable = true;
 		public static bool MarkVisitedFlag = true;
@@ -35,16 +36,23 @@ namespace Tanukinomori
 		public static Func<StarData, string> GetStarName = star => star.displayName;
 		public static Func<PlanetData, string> GetPlanetName = planet => planet.displayName;
 
+		private Harmony harmony;
+
 		public void Awake()
 		{
 			LogManager.Logger = base.Logger;
 			new CruiseAssistConfigManager(base.Config);
 			ConfigManager.CheckConfig(ConfigManager.Step.AWAKE);
-			var harmony = new Harmony($"{ModGuid}.Patch");
+			harmony = new Harmony($"{ModGuid}.Patch");
 			harmony.PatchAll(typeof(Patch_GameMain));
 			harmony.PatchAll(typeof(Patch_UISailPanel));
 			harmony.PatchAll(typeof(Patch_UIStarmap));
 			harmony.PatchAll(typeof(Patch_PlayerMoveSail));
+		}
+
+		public void OnDestroy()
+		{
+			harmony.UnpatchAll();
 		}
 
 		public void OnGUI()
