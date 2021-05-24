@@ -101,6 +101,12 @@ namespace tanu.CruiseAssist
 
 				if (!DSPGame.IsMenuDemo && GameMain.galaxy != null)
 				{
+					if (!ContainsKey("Save", $"History_{GameMain.galaxy.seed}") || !ContainsKey("Save", $"Bookmark_{GameMain.galaxy.seed}"))
+					{
+						Bind("Save", $"History_{GameMain.galaxy.seed}", "");
+						Bind("Save", $"Bookmark_{GameMain.galaxy.seed}", "");
+						saveFlag = true;
+					}
 					saveFlag |= UpdateEntry("Save", $"History_{GameMain.galaxy.seed}", ListUtils.ToString(CruiseAssist.History));
 					saveFlag |= UpdateEntry("Save", $"Bookmark_{GameMain.galaxy.seed}", ListUtils.ToString(CruiseAssist.Bookmark));
 				}

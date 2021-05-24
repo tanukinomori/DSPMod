@@ -66,6 +66,12 @@ namespace tanu.CruiseAssist
 		public static T GetValue<T>(string section, string key) =>
 			GetEntry<T>(section, key).Value;
 
+		public static bool ContainsKey(ConfigDefinition configDefinition) =>
+			Config.ContainsKey(configDefinition);
+
+		public static bool ContainsKey(string section, string key) =>
+			Config.ContainsKey(new ConfigDefinition(section, key));
+
 		public static bool UpdateEntry<T>(string section, string key, T value) where T : IComparable
 		{
 			var entry = GetEntry<T>(section, key);
