@@ -2,12 +2,12 @@
 using System.Linq;
 using UnityEngine;
 
-namespace Tanukinomori
+namespace tanu.MovePlanet
 {
 	public class MovePlanetStarListUI
 	{
-		public static float WindowWidth = 400f;
-		public static float WindowHeight = 480f;
+		public const float WindowWidth = 400f;
+		public const float WindowHeight = 480f;
 
 		public static bool[] Show = { false, false };
 		public static Rect Rect = new Rect(0f, 0f, WindowWidth, WindowHeight);
@@ -20,6 +20,9 @@ namespace Tanukinomori
 
 		private static StarData selectFromStar = null;
 		private static PlanetData selectPlanet = null;
+
+		private const string VisitedMark = "● ";
+		private const string NonVisitMark = "";
 
 		public static void OnGUI()
 		{
@@ -144,6 +147,10 @@ namespace Tanukinomori
 					var factoryCount = satellites.AddItem(planet).Where(p => p.factory != null).Count();
 
 					var text = originalStar.displayName + " - " + planet.displayName + (satelliteCount > 0 ? $" (+{satelliteCount})" : "");
+					if (MovePlanet.MarkVisitedFlag)
+					{
+						text = (factoryCount > 0 ? VisitedMark : NonVisitMark) + text;
+					}
 					GUILayout.Label(text, nameLabelStyle);
 					textHeight = nameLabelStyle.CalcHeight(new GUIContent(text), nameLabelStyle.fixedWidth);
 
@@ -169,6 +176,10 @@ namespace Tanukinomori
 					float textHeight;
 
 					var text = star.displayName;
+					if (MovePlanet.MarkVisitedFlag)
+					{
+						text = (star.planets.Where(p => p.factory != null).Count() > 0 ? VisitedMark : NonVisitMark) + text;
+					}
 					GUILayout.Label(text, nameLabelStyle);
 					textHeight = nameLabelStyle.CalcHeight(new GUIContent(text), nameLabelStyle.fixedWidth);
 
@@ -211,7 +222,6 @@ namespace Tanukinomori
 
 					var satellites = planet.star.planets.Where(p => p.orbitAroundPlanet != null && p.orbitAroundPlanet.id == planet.id);
 					var satelliteCount = satellites.Count();
-					var factoryCount = satellites.AddItem(planet).Where(p => p.factory != null).Count();
 
 					var text = fromStar.displayName + " - " + planet.displayName + (satelliteCount > 0 ? $" (+{satelliteCount})" : "") + " > " + toStar.displayName;
 					GUILayout.Label(text, nameLabelStyle);

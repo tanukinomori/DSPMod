@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Tanukinomori
+namespace tanu.MovePlanet
 {
 	public class MovePlanetMainUI
 	{
@@ -8,8 +8,8 @@ namespace Tanukinomori
 
 		public static int wIdx = 0;
 
-		public static float WindowWidth = 273f;
-		public static float WindowHeight = 70f;
+		public const float WindowWidth = 273f;
+		public const float WindowHeight = 70f;
 
 		public static bool Show = false;
 		public static Rect[] Rect = {
@@ -18,6 +18,7 @@ namespace Tanukinomori
 
 		private static float lastCheckWindowLeft = float.MinValue;
 		private static float lastCheckWindowTop = float.MinValue;
+
 		public static long NextCheckGameTick = long.MaxValue;
 
 		public static void OnGUI()

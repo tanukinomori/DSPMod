@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Tanukinomori
+namespace tanu.MovePlanet
 {
 	[HarmonyPatch(typeof(StationComponent))]
 	public class Patch_StationComponent

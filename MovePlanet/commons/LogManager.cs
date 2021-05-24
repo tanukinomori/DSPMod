@@ -1,7 +1,7 @@
 ﻿using BepInEx.Logging;
 using System.Reflection;
 
-namespace Tanukinomori
+namespace tanu.MovePlanet
 {
 	public static class LogManager
 	{

@@ -1,4 +1,4 @@
-﻿namespace Tanukinomori
+﻿namespace tanu.MovePlanet
 {
 	public struct Tuple<T1, T2>
 	{

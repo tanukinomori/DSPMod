@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 
-namespace Tanukinomori
+namespace tanu.MovePlanet
 {
 	public class MovePlanetConfigUI
 	{
 		private static int wIdx = 0;
 
-		public static float WindowWidth = 400f;
-		public static float WindowHeight = 300f;
+		public const float WindowWidth = 400f;
+		public const float WindowHeight = 300f;
 
 		public static bool[] Show = { false, false };
 		public static Rect[] Rect = {
@@ -123,6 +123,14 @@ namespace Tanukinomori
 
 			GUI.changed = false;
 			MovePlanet.LoadWarperFlag = GUILayout.Toggle(MovePlanet.LoadWarperFlag, " Warp the Logistics vessel when Load Game.", nToggleStyle);
+			if (GUI.changed)
+			{
+				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);
+				MovePlanetMainUI.NextCheckGameTick = GameMain.gameTick + 300;
+			}
+
+			GUI.changed = false;
+			MovePlanet.MarkVisitedFlag = GUILayout.Toggle(MovePlanet.MarkVisitedFlag, "Mark the visited system and planet.", nToggleStyle);
 			if (GUI.changed)
 			{
 				VFAudio.Create("ui-click-0", null, Vector3.zero, true, 0);

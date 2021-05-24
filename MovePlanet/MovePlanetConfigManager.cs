@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Tanukinomori
+namespace tanu.MovePlanet
 {
 	public class MovePlanetConfigManager : ConfigManager
 	{
@@ -31,6 +31,7 @@ namespace Tanukinomori
 
 				MovePlanet.MovePlayerFlag = Bind("Setting", "MovePlayer", true).Value;
 				MovePlanet.LoadWarperFlag = Bind("Setting", "LoadWarper", true).Value;
+				MovePlanet.MarkVisitedFlag = Bind("Setting", "MarkVisited", true).Value;
 
 				MovePlanetMainUI.Scale = (float)Bind("Setting", "UIScale", 150).Value;
 
@@ -68,6 +69,7 @@ namespace Tanukinomori
 
 				saveFlag |= UpdateEntry("Setting", "MovePlayer", MovePlanet.MovePlayerFlag);
 				saveFlag |= UpdateEntry("Setting", "LoadWarper", MovePlanet.LoadWarperFlag);
+				saveFlag |= UpdateEntry("Setting", "MarkVisited", MovePlanet.MarkVisitedFlag);
 
 				saveFlag |= UpdateEntry("Setting", "UIScale", (int)MovePlanetMainUI.Scale);
 
@@ -84,6 +86,11 @@ namespace Tanukinomori
 
 				if (!DSPGame.IsMenuDemo && GameMain.galaxy != null)
 				{
+					if (!ContainsKey("Save", $"Mapping_{GameMain.galaxy.seed}"))
+					{
+						Bind("Save", $"Mapping_{GameMain.galaxy.seed}", "");
+						saveFlag = true;
+					}
 					saveFlag |= UpdateEntry("Save", $"Mapping_{GameMain.galaxy.seed}", ListUtils.ToString(MovePlanet.PlanetStarMapping.Select(tuple => $"{tuple.v1}-{tuple.v2}").ToList()));
 				}
 

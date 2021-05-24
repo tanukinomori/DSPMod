@@ -1,8 +1,7 @@
 ﻿using HarmonyLib;
 using System;
-using System.Reflection;
 
-namespace Tanukinomori
+namespace tanu.MovePlanet
 {
 	[HarmonyPatch(typeof(UILoadGameWindow))]
 	public class Patch_UILoadGameWindow

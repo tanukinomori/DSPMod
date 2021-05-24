@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 // https://github.com/BepInEx/BepInEx/blob/master/BepInEx.Core/Configuration/ConfigFile.cs
 
-namespace Tanukinomori
+namespace tanu.MovePlanet
 {
 	public abstract class ConfigManager
 	{
@@ -53,7 +53,6 @@ namespace Tanukinomori
 			catch (KeyNotFoundException e)
 			{
 				LogManager.LogError($"{e.GetType()}: configDefinition={configDefinition}");
-				MovePlanet.ErrorFlag = true;
 				throw;
 			}
 		}
@@ -66,6 +65,12 @@ namespace Tanukinomori
 
 		public static T GetValue<T>(string section, string key) =>
 			GetEntry<T>(section, key).Value;
+
+		public static bool ContainsKey(ConfigDefinition configDefinition) =>
+			Config.ContainsKey(configDefinition);
+
+		public static bool ContainsKey(string section, string key) =>
+			Config.ContainsKey(new ConfigDefinition(section, key));
 
 		public static bool UpdateEntry<T>(string section, string key, T value) where T : IComparable
 		{
@@ -102,7 +107,7 @@ namespace Tanukinomori
 			}
 		}
 
-		public static void Save(bool clearOrphanedEntries = true)
+		public static void Save(bool clearOrphanedEntries = false)
 		{
 			if (clearOrphanedEntries)
 			{

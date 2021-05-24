@@ -4,20 +4,21 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Tanukinomori
+namespace tanu.MovePlanet
 {
 	[BepInPlugin(ModGuid, ModName, ModVersion)]
 	public class MovePlanet : BaseUnityPlugin
 	{
 		public const string ModGuid = "tanu.MovePlanet";
 		public const string ModName = "MovePlanet";
-		public const string ModVersion = "0.0.6";
+		public const string ModVersion = "0.0.7";
 
 		public static bool ConfigEnable = true;
 		public static bool SessionEnable = false;
 		public static bool ErrorFlag = false;
 		public static bool MovePlayerFlag = true;
 		public static bool LoadWarperFlag = true;
+		public static bool MarkVisitedFlag = true;
 		public static bool LoadGameWindowActive = false;
 
 		public static List<Tuple<int, int>> PlanetStarMapping = new List<Tuple<int, int>>();

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Tanukinomori
+namespace tanu.MovePlanet
 {
 	public class MovePlanetDebugUI
 	{

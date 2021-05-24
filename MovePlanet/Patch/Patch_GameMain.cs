@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
-using System.Reflection;
 
-namespace Tanukinomori
+namespace tanu.MovePlanet
 {
 	[HarmonyPatch(typeof(GameMain))]
 	public class Patch_GameMain

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Tanukinomori
+namespace tanu.MovePlanet
 {
 	public class Patch_PlanetAlgorithm
 	{
