@@ -7,11 +7,12 @@
     <ProjectGuid>{9CDB5E0F-FB97-46FF-A4FB-A9A400443FD3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tanukinomori</RootNamespace>
+    <RootNamespace>tanu.CruiseAssist</RootNamespace>
     <AssemblyName>CruiseAssist</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,16 +31,22 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\DysonSphereProgram\profiles\Default\BepInEx\core\0Harmony.dll</HintPath>
+    <Reference Include="0Harmony, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\DysonSphereProgram\profiles\20210529\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\..\..\mnt\disk01\steam\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\DysonSphereProgram\profiles\Default\BepInEx\core\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\mnt\disk01\steam\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\netstandard.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -47,10 +55,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\Desktop\DysonSphereProgram\DowngradeDll\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\mnt\disk01\steam\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\..\..\Desktop\DysonSphereProgram\DowngradeDll\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\mnt\disk01\steam\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -105,12 +113,15 @@
     <Content Include="image\image016.png" />
     <Content Include="image\image017.png" />
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>set BEPINEX_PATH=C:\Users\tanu\AppData\Roaming\r2modmanPlus-local\DysonSphereProgram\profiles\Default\BepInEx
+    <PostBuildEvent>set BEPINEX_PATH=C:\Users\tanu\AppData\Roaming\r2modmanPlus-local\DysonSphereProgram\profiles\20210529\BepInEx
 del %25BEPINEX_PATH%25\plugins\$(TargetFileName)
 del %25BEPINEX_PATH%25\scripts\$(TargetFileName)
-copy /y $(TargetPath) %25BEPINEX_PATH%25\scripts
+copy /y $(TargetPath) %25BEPINEX_PATH%25\plugins
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -15,7 +15,7 @@ namespace tanu.CruiseAssist
 
 			matcher.
 				MatchForward(true,
-					new CodeMatch(OpCodes.Ldarg_0)); // 0
+					new CodeMatch(OpCodes.Ldarg_0)); // 47:0
 
 			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
 
@@ -34,16 +34,16 @@ namespace tanu.CruiseAssist
 					new CodeMatch(OpCodes.Stloc_S),
 					new CodeMatch(OpCodes.Ldc_I4_1),
 					new CodeMatch(OpCodes.Stloc_S),
-					new CodeMatch(OpCodes.Ldloc_S),
-					new CodeMatch(OpCodes.Stloc_S)); // 156
+					new CodeMatch(OpCodes.Ldloc_S), // 93:156
+					new CodeMatch(OpCodes.Stloc_S)); // 93:157
 
-			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos); // 156 + 1 => 157
+			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
 
 			matcher.
 				Advance(1).
 				InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_0)).
 				InsertAndAdvance(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(StarData), nameof(StarData.planets)))).
-				InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, 17)).
+				InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, 21)).
 				InsertAndAdvance(Transpilers.EmitDelegate<Action<PlanetData[], int>>(
 					(planets, planetIndex) =>
 					{
@@ -57,16 +57,16 @@ namespace tanu.CruiseAssist
 					new CodeMatch(OpCodes.Stloc_S),
 					new CodeMatch(OpCodes.Ldc_I4_1),
 					new CodeMatch(OpCodes.Stloc_S),
-					new CodeMatch(OpCodes.Ldloc_S),
-					new CodeMatch(OpCodes.Stloc_S)); // 252
+					new CodeMatch(OpCodes.Ldloc_S), // 116:253
+					new CodeMatch(OpCodes.Stloc_S)); // 116:254
 
-			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos); // 252 + 1 + 4 => 257
+			//LogManager.LogInfo("matcher.Pos=" + matcher.Pos);
 
 			matcher.
 				Advance(1).
-				InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, 21)).
+				InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, 20)).
 				InsertAndAdvance(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(GalaxyData), nameof(GalaxyData.stars)))).
-				InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, 22)).
+				InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, 24)).
 				InsertAndAdvance(Transpilers.EmitDelegate<Action<StarData[], int>>(
 					(stars, starIndex) =>
 					{
