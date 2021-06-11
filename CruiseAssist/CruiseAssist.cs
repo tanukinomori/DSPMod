@@ -14,7 +14,7 @@ namespace tanu.CruiseAssist
 	{
 		public const string ModGuid = "tanu.CruiseAssist";
 		public const string ModName = "CruiseAssist";
-		public const string ModVersion = "0.0.29";
+		public const string ModVersion = "0.0.30";
 
 		public static bool Enable = true;
 		public static bool MarkVisitedFlag = true;

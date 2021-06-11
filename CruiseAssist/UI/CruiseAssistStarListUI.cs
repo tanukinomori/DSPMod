@@ -468,15 +468,21 @@ namespace tanu.CruiseAssist
 			{
 				if (star != null)
 				{
-					var uiStar = uiGame.starmap.starUIs.Where(s => s.star.id == star.id).First();
-					UIStarmap_OnStarClick(uiGame.starmap, uiStar);
-					uiGame.starmap.OnCursorFunction2Click(0);
+					var uiStar = uiGame.starmap.starUIs.Where(s => s.star.id == star.id).FirstOrDefault();
+					if (uiStar != null)
+					{
+						UIStarmap_OnStarClick(uiGame.starmap, uiStar);
+						uiGame.starmap.OnCursorFunction2Click(0);
+					}
 				}
 				if (planet != null)
 				{
-					var uiPlanet = uiGame.starmap.planetUIs.Where(p => p.planet.id == planet.id).First();
-					UIStarmap_OnPlanetClick(uiGame.starmap, uiPlanet);
-					uiGame.starmap.OnCursorFunction2Click(0);
+					var uiPlanet = uiGame.starmap.planetUIs.Where(p => p.planet.id == planet.id).FirstOrDefault();
+					if (uiPlanet != null)
+					{
+						UIStarmap_OnPlanetClick(uiGame.starmap, uiPlanet);
+						uiGame.starmap.OnCursorFunction2Click(0);
+					}
 				}
 			}
 
