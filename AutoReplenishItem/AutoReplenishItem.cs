@@ -9,7 +9,7 @@ namespace AutoReplenishItem
 	{
 		public const string ModGuid = "jp.co.tanukinomori.dsp.autoreplenishitem";
 		public const string ModName = "AutoReplenishItem";
-		public const string ModVersion = "0.0.1";
+		public const string ModVersion = "0.0.2";
 
 		public static Dictionary<int, int> AutoReplenishItemMap { get; } = new Dictionary<int, int>();
 

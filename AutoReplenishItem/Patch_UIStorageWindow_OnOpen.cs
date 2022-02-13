@@ -24,8 +24,8 @@ namespace AutoReplenishItem
 				var storageItemCount = storageComponent.GetItemCount(itemId);
 				if (playerItemCount < eplenishItemCount) {
 					var requireItemCount = eplenishItemCount - playerItemCount;
-					var takeItemCount = storageComponent.TakeItem(itemId, requireItemCount);
-					GameMain.mainPlayer.package.AddItem(itemId, takeItemCount);
+					var takeItemCount = storageComponent.TakeItem(itemId, requireItemCount, out int inc);
+					GameMain.mainPlayer.package.AddItem(itemId, takeItemCount, inc, out int remainInc);
 				}
 			}
 		}
